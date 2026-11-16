@@ -214,6 +214,16 @@ Se alguma variável obrigatória faltar, a API se recusa a iniciar e informa qua
 | --- | --- | --- |
 | `VITE_API_URL` | Não | Endereço do backend. Padrão: `http://localhost:3000`. |
 
+## Equipe
+
+| Quem | Papel no projeto | Instagram |
+| --- | --- | --- |
+| **Ana** | Idealizadora e principal redatora da ideia do projeto | [@anaclarabertoloto](https://www.instagram.com/anaclarabertoloto/) |
+| **Murilo** | Designer | [@murilo_silva.007](https://www.instagram.com/murilo_silva.007/) |
+| **Daniel** | Designer | [@d_mercantee](https://www.instagram.com/d_mercantee/) |
+| **Pedro** | Backend e banco de dados | [@pedr0hml](https://www.instagram.com/pedr0hml/) |
+| **Sérgio** | Backend e estrutura do site | [@fraz0nn](https://www.instagram.com/fraz0nn/) |
+
 ## Dados e privacidade
 
 O sistema lida com dados pessoais de alunos. Por isso este repositório contém **apenas código**: credenciais, planilhas, arquivos enviados pelos usuários e relatórios internos ficam de fora (veja o `.gitignore`). Ao contribuir, não inclua dados reais em commits, exemplos ou capturas de tela.
