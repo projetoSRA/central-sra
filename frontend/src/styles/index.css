@@ -1,0 +1,349 @@
+@import './fonts.css';
+@import './tailwind.css';
+@import './theme.css';
+
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+  background: var(--paper);
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgb(207 207 207 / 28%);
+}
+
+/* Foco de teclado visível em tudo que é clicável */
+:where(a, button, [role="button"], [tabindex]):focus-visible {
+  outline: 2px solid var(--accent-soft);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ------------------------------------------------------------------
+   MODAIS — cabeçalho e ações sempre visíveis, inclusive em telas baixas
+------------------------------------------------------------------- */
+.app-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+  background: rgb(0 0 0 / 60%);
+}
+.app-modal-panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 64rem;
+  max-height: calc(100dvh - 3rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  overflow: hidden;
+  border-radius: 0.875rem;
+  box-shadow: 0 24px 60px rgb(0 0 0 / 45%);
+}
+.app-modal-header, .app-modal-footer {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+}
+.app-modal-header { justify-content: space-between; border-bottom: 1px solid var(--line); }
+.app-modal-header > button { flex-shrink: 0; min-width: 44px; min-height: 44px; }
+.app-modal-form { display: flex; flex-direction: column; min-height: 0; }
+.app-modal-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 16px;
+}
+.app-modal-fields > div { min-width: 0; }
+.app-modal-fields input, .app-modal-fields select, .app-modal-fields textarea { min-width: 0; max-width: 100%; font-size: 16px; }
+.app-modal-footer { justify-content: flex-end; border-top: 1px solid var(--line); }
+.app-modal-footer > button { min-height: 44px; flex: 1; }
+@media (min-width: 640px) {
+  .app-modal-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 20px 24px; }
+  .app-modal-header, .app-modal-footer { padding: 12px 24px; }
+  .app-modal-footer > button { flex: initial; }
+}
+
+/* ------------------------------------------------------------------
+   BARRAS DE ROLAGEM
+   Em @layer base para que utilitários como [scrollbar-width:none]
+   continuem conseguindo esconder a barra onde o layout pede.
+------------------------------------------------------------------- */
+@layer base {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(237 237 237 / 22%) transparent;
+  }
+}
+
+.custom-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(207 207 207 / 55%) transparent;
+}
+
+/* ------------------------------------------------------------------
+   CABEÇALHO SUPERIOR + ÁREA DE ROLAGEM
+   Desktop: o cabeçalho é uma faixa com um fio embaixo, fora da área que
+   rola; o conteúdo some num esmaecimento ao chegar nas bordas.
+   Celular: a página inteira rola, então o cabeçalho vira uma barra que
+   gruda no topo.
+------------------------------------------------------------------- */
+.app-topbar {
+  position: sticky;
+  top: 0.5rem;
+  z-index: 30;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0.875rem;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 35%);
+}
+.app-topbar::before {
+  content: "";
+  position: absolute;
+  inset: -0.8rem -1px auto;
+  height: 0.75rem;
+  background: var(--paper);
+  pointer-events: none;
+}
+@media (min-width: 1024px) {
+  .app-topbar {
+    position: relative;
+    top: auto;
+    flex-shrink: 0;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--line-strong);
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .app-topbar::before {
+    display: none;
+  }
+  .app-scroll-area {
+    flex: 1 1 0%;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-top: 1.75rem;
+    padding-right: 0.5rem;
+    padding-bottom: 2rem;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 1.25rem, #000 calc(100% - 2rem), transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 1.25rem, #000 calc(100% - 2rem), transparent 100%);
+  }
+  .app-scroll-area::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Link de navegação do cabeçalho: o item ativo ganha um fio embaixo,
+   alinhado ao fio do próprio cabeçalho. */
+.app-navlink {
+  position: relative;
+  padding: 0.25rem 0;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: rgb(237 237 237 / 62%);
+  transition: color 0.15s ease;
+}
+.app-navlink:hover {
+  color: var(--ink);
+}
+.app-navlink[aria-current="page"] {
+  color: var(--ink);
+}
+.app-navlink[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -0.4rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent-soft);
+}
+
+/* ------------------------------------------------------------------
+   RÉGUA DE HORAS — a marca visual do app.
+   O progresso do aluno é desenhado como uma régua: cada traço vale uma
+   fração da meta; os já cumpridos ficam escuros.
+------------------------------------------------------------------- */
+.hour-ruler {
+  --tick: 0.875rem;
+  --tick-major: 1.75rem;
+  width: 100%;
+}
+.hour-ruler__ticks {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: var(--tick-major);
+  border-bottom: 1px solid var(--line-strong);
+}
+.hour-ruler__ticks > span {
+  width: 2px;
+  height: var(--tick);
+  border-radius: 1px 1px 0 0;
+  background: rgb(237 237 237 / 18%);
+  transition: background-color 0.4s ease;
+}
+.hour-ruler__ticks > span[data-major="true"] {
+  height: var(--tick-major);
+}
+.hour-ruler__ticks > span[data-done="true"] {
+  background: var(--accent-soft);
+}
+.hour-ruler__ticks > span[data-done="true"][data-major="true"] {
+  background: var(--ink);
+}
+.hour-ruler__labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.4rem;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: rgb(237 237 237 / 60%);
+}
+.hour-ruler--lg {
+  --tick: 1.5rem;
+  --tick-major: 3rem;
+}
+.hour-ruler--lg .hour-ruler__ticks > span {
+  width: 3px;
+}
+
+/* Na tela de entrada a régua se preenche uma vez, da esquerda para a direita */
+@keyframes ruler-in {
+  from { background: rgb(237 237 237 / 18%); }
+}
+.hour-ruler--animated .hour-ruler__ticks > span[data-done="true"] {
+  animation: ruler-in 0.5s ease both;
+  animation-delay: calc(var(--i) * 28ms + 200ms);
+}
+
+/* ------------------------------------------------------------------
+   CONTROLES NATIVOS — o que o navegador desenha sozinho segue o tema
+------------------------------------------------------------------- */
+
+/* Foco visível nos campos nativos (os componentes de ui/ já têm o seu) */
+:where(input, select, textarea):not([data-slot]):focus-visible {
+  border-color: var(--accent-soft);
+  box-shadow: 0 0 0 3px rgb(207 207 207 / 22%);
+}
+
+:where(input, select, textarea):not([data-slot]):disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Setas do input numérico */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  height: 1.75rem;
+  margin-left: 0.25rem;
+  opacity: 0.45;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+input[type="number"]:hover::-webkit-inner-spin-button,
+input[type="number"]:focus::-webkit-inner-spin-button {
+  opacity: 0.9;
+}
+
+/* Ícone de calendário / relógio */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+input[type="month"]::-webkit-calendar-picker-indicator {
+  padding: 4px;
+  border-radius: 6px;
+  opacity: 0.6;
+  cursor: pointer;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="time"]::-webkit-calendar-picker-indicator:hover,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover,
+input[type="month"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+  background-color: rgb(237 237 237 / 8%);
+}
+
+/* Select nativo: seta própria */
+select:not([multiple]):not([aria-hidden="true"]) {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 2.5rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ededed' stroke-opacity='0.7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  cursor: pointer;
+}
+select option,
+select optgroup {
+  background-color: var(--raised);
+  color: var(--ink);
+}
+select option:disabled {
+  color: rgb(237 237 237 / 40%);
+}
+
+/* Botão "Escolher arquivo" */
+input[type="file"] {
+  cursor: pointer;
+  color: rgb(237 237 237 / 70%);
+}
+input[type="file"]::file-selector-button {
+  margin-right: 0.75rem;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+input[type="file"]::file-selector-button:hover {
+  background: rgb(237 237 237 / 7%);
+}
+
+/* Preenchimento automático sem o fundo colorido do navegador */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  transition: background-color 99999s ease-out 0s;
+  caret-color: currentColor;
+}

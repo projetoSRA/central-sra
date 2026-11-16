@@ -1,0 +1,46 @@
+# Variáveis de ambiente (contêm segredos reais — nunca versionar)
+.env
+.env.*
+!*.env.example
+
+# Dependências
+node_modules/
+
+# Build
+dist/
+build/
+
+# Uploads locais de desenvolvimento
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Planilhas e exportações (podem conter dados pessoais de alunos)
+*.xlsx
+*.xls
+*.csv
+
+# Relatórios internos de segurança (detalham falhas do sistema real)
+PENTEST_REPORT.md
+CORRECOES_APLICADAS.md
+
+# Documentos do trabalho escrito e da apresentação — ficam fora do repositório
+/*.pdf
+/*.docx
+/*.pptx
+/.slide-build/
+/output/
+
+# Imagem solta que nenhuma tela usa
+frontend/src/assets/willen.jpeg
+
+# Lockfile vazio na raiz (os de verdade ficam em backend/ e frontend/)
+/package-lock.json
+
+# Sistema / editor
+.DS_Store
+Thumbs.db
+*.log
+
+# Configuração local do Claude Code (não é parte do projeto em si)
+.claude/
+desktop.ini
