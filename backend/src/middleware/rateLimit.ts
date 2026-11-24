@@ -27,7 +27,12 @@ export function simpleRateLimit(options: {
   cleanup.unref?.();
 
   return (req: Request, res: Response, next: NextFunction) => {
-    const key = `${req.ip || "unknown"}:${req.body?.identifier || ""}`;
+    // A empresa entra com o CNPJ com ou sem pontuação; a chave usa só os
+    // dígitos para que as duas formas contem no mesmo limite.
+    const bruto = String(req.body?.identifier ?? "").trim();
+    const identificador =
+      String(req.body?.type ?? "").toLowerCase() === "empresa" ? bruto.replace(/\D/g, "") : bruto;
+    const key = `${req.ip || "unknown"}:${identificador}`;
     const now = Date.now();
     const bucket = buckets.get(key);
 

@@ -26,10 +26,18 @@ export const SENHA_PADRAO_PRIMEIRO_ACESSO = required("SENHA_PADRAO_PRIMEIRO_ACES
 // CORS compara texto exato: uma barra final ou espaço no .env bloqueia todas
 // as requisições. Por isso o valor é normalizado. Aceita várias origens
 // separadas por vírgula (ex.: "http://localhost:5173,https://meusite.com").
-const origens = (process.env.FRONTEND_URL || "http://localhost:5173")
+const ORIGEM_PADRAO = "http://localhost:5173";
+const origens = (process.env.FRONTEND_URL || ORIGEM_PADRAO)
   .split(",")
   .map((o) => o.trim().replace(/\/+$/, ""))
   .filter(Boolean);
+
+if (origens.length === 0) {
+  // Ex.: FRONTEND_URL=" , ". Uma lista vazia bloquearia todas as origens
+  // sem aviso; melhor cair no padrão e avisar no log.
+  console.warn(`FRONTEND_URL sem nenhuma origem válida; usando ${ORIGEM_PADRAO}.`);
+  origens.push(ORIGEM_PADRAO);
+}
 
 export const FRONTEND_URL: string | string[] = origens.length === 1 ? origens[0] : origens;
 export const PORT = process.env.PORT || 3000;
