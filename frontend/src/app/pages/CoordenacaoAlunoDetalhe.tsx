@@ -269,7 +269,7 @@ export default function CoordenacaoAlunoDetalhe() {
         {aluno && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <div className="rounded-2xl bg-raised p-5 border border-ink/[0.12]" style={cardStyle}>
-              <p className="text-sm text-ink/75 font-medium mb-1">
+              <p className="text-sm text-ink font-medium mb-1">
                 {aluno.nivel_ensino === "FACULDADE" ? "RA" : "RM"}
               </p>
               <p className="text-2xl font-semibold text-ink">
@@ -278,21 +278,21 @@ export default function CoordenacaoAlunoDetalhe() {
             </div>
 
             <div className="rounded-2xl bg-raised p-5 border border-ink/[0.12]" style={cardStyle}>
-              <p className="text-sm text-ink/75 font-medium mb-1">
+              <p className="text-sm text-ink font-medium mb-1">
                 Total de palestras no ano
               </p>
               <p className="text-2xl font-semibold text-ink">{aluno.totalPalestrasNoAno}</p>
             </div>
 
             <div className="rounded-2xl bg-raised p-5 border border-ink/[0.12]" style={cardStyle}>
-              <p className="text-sm text-ink/75 font-medium mb-1">
+              <p className="text-sm text-ink font-medium mb-1">
                 Palestras que participou
               </p>
               <p className="text-2xl font-semibold text-ink">{aluno.eventosParticipados}</p>
             </div>
 
             <div className="rounded-2xl bg-raised p-5 border border-ink/[0.12]" style={cardStyle}>
-              <p className="text-sm text-ink/75 font-medium mb-1">
+              <p className="text-sm text-ink font-medium mb-1">
                 Total de horas
               </p>
               <p className="text-2xl font-semibold text-ink">{Number(aluno.totalHoras || 0)}h</p>
@@ -312,7 +312,7 @@ export default function CoordenacaoAlunoDetalhe() {
             <CardContent className="space-y-6">
               <div className="border-t border-ink/[0.12] pt-5 flex flex-col sm:flex-row sm:items-end gap-3">
                 <div className="flex-1">
-                  <label className="block text-ink/75 text-sm mb-2">Bimestre do portfólio</label>
+                  <label className="block text-ink text-sm mb-2">Bimestre do portfólio</label>
                   <select
                     value={bimestrePortfolio}
                     onChange={(e) => setBimestrePortfolio(e.target.value)}
@@ -329,7 +329,7 @@ export default function CoordenacaoAlunoDetalhe() {
                   type="button"
                   onClick={baixarPortfolio}
                   disabled={gerandoPortfolio}
-                  className="rounded-xl bg-ink text-on-accent hover:bg-ink/85"
+                  className="rounded-xl bg-brand text-on-brand hover:bg-brand-hover"
                 >
                   {gerandoPortfolio ? "Gerando..." : "Baixar Portfólio (.docx)"}
                 </Button>
@@ -347,8 +347,8 @@ export default function CoordenacaoAlunoDetalhe() {
                   type="button"
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1 ${
                     aba === "certificados"
-                      ? "bg-ink text-on-accent"
-                      : "text-ink/75 hover:text-ink"
+                      ? "bg-brand text-on-brand"
+                      : "text-ink hover:text-ink"
                   }`}
                 >
                   <FileBadge2 className="size-4" />
@@ -360,8 +360,8 @@ export default function CoordenacaoAlunoDetalhe() {
                   type="button"
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1 ${
                     aba === "eventos"
-                      ? "bg-ink text-on-accent"
-                      : "text-ink/75 hover:text-ink"
+                      ? "bg-brand text-on-brand"
+                      : "text-ink hover:text-ink"
                   }`}
                 >
                   <Mic2 className="size-4" />
@@ -373,8 +373,8 @@ export default function CoordenacaoAlunoDetalhe() {
                   type="button"
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1 ${
                     aba === "visitas"
-                      ? "bg-ink text-on-accent"
-                      : "text-ink/75 hover:text-ink"
+                      ? "bg-brand text-on-brand"
+                      : "text-ink hover:text-ink"
                   }`}
                 >
                   <Building2 className="size-4" />
@@ -389,18 +389,18 @@ export default function CoordenacaoAlunoDetalhe() {
           <CardContent className="space-y-4">
             {carregandoAba && (
               <div className="rounded-2xl border border-dashed border-ink/25 p-8 text-center">
-                <p className="text-ink/75">Carregando...</p>
+                <p className="text-ink">Carregando...</p>
               </div>
             )}
 
             {!carregandoAba && aba === "certificados" && (
               certificados.length === 0 ? (
                 <div className="rounded-2xl border border-dashed border-ink/25 p-8 text-center">
-                  <FileBadge2 className="size-10 text-ink/75 mx-auto mb-3" />
+                  <FileBadge2 className="size-10 text-ink mx-auto mb-3" />
                   <h3 className="text-ink text-lg font-semibold mb-1">
                     Nenhum certificado ou relatório
                   </h3>
-                  <p className="text-ink/75">
+                  <p className="text-ink">
                     Os arquivos enviados pelo aluno aparecerão aqui.
                   </p>
                 </div>
@@ -419,7 +419,7 @@ export default function CoordenacaoAlunoDetalhe() {
                             <h3 className="text-ink font-semibold text-lg">
                               {item.titulo}
                             </h3>
-                            <p className="text-ink/75 text-sm">
+                            <p className="text-ink-muted text-sm">
                               {item.tipo_arquivo === "RELATORIO" ? "Relatório" : "Certificado"}
                             </p>
                           </div>
@@ -438,13 +438,13 @@ export default function CoordenacaoAlunoDetalhe() {
                         </div>
 
                         <div className="grid grid-cols-2 gap-2 text-sm">
-                          <p className="text-ink/75">
+                          <p className="text-ink">
                             Data:{" "}
                             <span className="text-ink">
                               {formatarData(item.data_emissao)}
                             </span>
                           </p>
-                          <p className="text-ink/75">
+                          <p className="text-ink">
                             Horas:{" "}
                             <span className="text-ink font-semibold">
                               {item.status_certificado.toUpperCase() === "APROVADO"
@@ -452,7 +452,7 @@ export default function CoordenacaoAlunoDetalhe() {
                                 : `${item.quantidade_horas}h (solicitado)`}
                             </span>
                           </p>
-                          <p className="text-ink/75 col-span-2">
+                          <p className="text-ink col-span-2">
                             Status:{" "}
                             <span className={`${status.classe} font-semibold`}>
                               {status.texto}
@@ -469,11 +469,11 @@ export default function CoordenacaoAlunoDetalhe() {
             {!carregandoAba && aba === "eventos" && (
               eventos.length === 0 ? (
                 <div className="rounded-2xl border border-dashed border-ink/25 p-8 text-center">
-                  <Mic2 className="size-10 text-ink/75 mx-auto mb-3" />
+                  <Mic2 className="size-10 text-ink mx-auto mb-3" />
                   <h3 className="text-ink text-lg font-semibold mb-1">
                     Nenhum evento
                   </h3>
-                  <p className="text-ink/75">
+                  <p className="text-ink">
                     As inscrições do aluno em eventos aparecerão aqui.
                   </p>
                 </div>
@@ -498,31 +498,31 @@ export default function CoordenacaoAlunoDetalhe() {
                       <h3 className="text-ink font-semibold text-lg mb-1">
                         {evento.titulo}
                       </h3>
-                      <p className="text-ink/75 text-sm mb-3">
+                      <p className="text-ink-muted text-sm mb-3">
                         {evento.nome_empresa} · {evento.tipo_evento || "EVENTO"}
                       </p>
 
                       <div className="grid grid-cols-2 gap-2 text-sm">
-                        <p className="text-ink/75">
+                        <p className="text-ink">
                           Data:{" "}
                           <span className="text-ink">
                             {formatarData(evento.data_evento)}
                           </span>
                         </p>
-                        <p className="text-ink/75">
+                        <p className="text-ink">
                           Horas:{" "}
                           <span className="text-ink font-semibold">
                             {evento.carga_horaria}h
                           </span>
                         </p>
-                        <p className="text-ink/75 col-span-2">
+                        <p className="text-ink col-span-2">
                           Situação:{" "}
                           <span className={`${rotulo.classe} font-semibold`}>
                             {rotulo.texto}
                           </span>
                         </p>
                         {situacao !== "aguardando_evento" && situacao !== "confirmado" && (
-                          <p className="text-ink/75 col-span-2">
+                          <p className="text-ink col-span-2">
                             Prazo da comprovação:{" "}
                             <span className="text-ink">
                               {formatarDataCurta(evento.prazo_comprovacao)}
@@ -533,7 +533,7 @@ export default function CoordenacaoAlunoDetalhe() {
                           </p>
                         )}
                         {evento.prazo_estendido_ate && (
-                          <p className="text-ink/75 col-span-2 break-words">
+                          <p className="text-ink col-span-2 break-words">
                             Prazo estendido:{" "}
                             <span className="text-ink">
                               {evento.prazo_motivo || "sem motivo registrado"}
@@ -547,7 +547,7 @@ export default function CoordenacaoAlunoDetalhe() {
                           </p>
                         )}
                         {evento.comprovacao_motivo_reprovacao && (
-                          <p className="text-ink/75 col-span-2 break-words">
+                          <p className="text-ink col-span-2 break-words">
                             Motivo da reprovação:{" "}
                             <span className="text-ink">
                               {evento.comprovacao_motivo_reprovacao}
@@ -592,11 +592,11 @@ export default function CoordenacaoAlunoDetalhe() {
             {!carregandoAba && aba === "visitas" && (
               visitas.length === 0 ? (
                 <div className="rounded-2xl border border-dashed border-ink/25 p-8 text-center">
-                  <Building2 className="size-10 text-ink/75 mx-auto mb-3" />
+                  <Building2 className="size-10 text-ink mx-auto mb-3" />
                   <h3 className="text-ink text-lg font-semibold mb-1">
                     Nenhuma visita registrada
                   </h3>
-                  <p className="text-ink/75">
+                  <p className="text-ink">
                     Use “Agendar Visita Técnica” na página de Alunos para registrar uma visita para toda a turma.
                   </p>
                 </div>
@@ -624,20 +624,20 @@ export default function CoordenacaoAlunoDetalhe() {
                       </div>
 
                       <div className="grid grid-cols-2 gap-2 text-sm">
-                        <p className="text-ink/75">
+                        <p className="text-ink">
                           Quantidade de horas:{" "}
                           <span className="text-ink font-semibold">
                             {visita.quantidade_horas}h
                           </span>
                         </p>
-                        <p className="text-ink/75">
+                        <p className="text-ink">
                           Data:{" "}
                           <span className="text-ink">
                             {formatarData(visita.data_visita)}
                           </span>
                         </p>
                         {visita.observacao && (
-                          <p className="text-ink/75 col-span-2">
+                          <p className="text-ink col-span-2">
                             Observação:{" "}
                             <span className="text-ink">{visita.observacao}</span>
                           </p>

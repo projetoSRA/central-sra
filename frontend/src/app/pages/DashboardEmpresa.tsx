@@ -1,3 +1,5 @@
+import { mascaraCNPJ } from "../utils/formatar";
+import AlternarTema from "../components/AlternarTema";
 import { useEffect, useMemo, useState } from "react";
 import Obrigatorio from "../components/Obrigatorio";
 import { useNavigate } from "react-router";
@@ -265,7 +267,7 @@ const confirmarLogout = () => {
 
   return (
     <div
-      className="min-h-screen lg:h-screen lg:overflow-hidden p-3 sm:p-4 md:p-6 relative"
+      className="min-h-screen lg:h-screen lg:overflow-hidden p-3 sm:p-4 md:p-6 lg:px-10 relative"
       style={{
         background:
           "var(--paper)",
@@ -292,19 +294,19 @@ const confirmarLogout = () => {
 
               <div>
                 <h2 className="text-2xl font-semibold text-ink">Empresa</h2>
-                <p className="text-ink/65 text-sm">Painel corporativo</p>
+                <p className="text-ink-muted text-sm">Painel corporativo</p>
               </div>
             </div>
 
             <div className="space-y-4">
               <div className="rounded-2xl p-4" style={cardStyle}>
-                <p className="text-ink/65 text-sm mb-1">Nome</p>
+                <p className="text-ink-muted text-sm mb-1">Nome</p>
                 <p className="text-ink font-semibold">{user.name}</p>
               </div>
 
               <div className="rounded-2xl p-4" style={cardStyle}>
-                <p className="text-ink/65 text-sm mb-1">CNPJ</p>
-                <p className="text-ink font-semibold">{user.identifier}</p>
+                <p className="text-ink-muted text-sm mb-1">CNPJ</p>
+                <p className="text-ink font-semibold">{mascaraCNPJ(user.identifier)}</p>
               </div>
             </div>
           </div>
@@ -320,7 +322,7 @@ const confirmarLogout = () => {
         </aside>
 
         <main className="order-1 lg:order-2 flex-1 min-w-0 lg:overflow-hidden">
-          <div className="max-w-7xl mx-auto lg:h-full lg:flex lg:flex-col">
+          <div className="max-w-[1760px] mx-auto lg:h-full lg:flex lg:flex-col">
             <header
               className="app-topbar flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 lg:mb-0 p-4 lg:px-0 lg:pt-1 lg:pb-5"
             >
@@ -330,32 +332,35 @@ const confirmarLogout = () => {
                   <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-ink">
                     Central SRA
                   </h1>
-                  <p className="text-ink/65 text-sm">
+                  <p className="text-ink-muted text-sm">
                     Bem-vindo(a), {user.name}
                   </p>
                 </div>
               </div>
 
+              <div className="flex items-center gap-2 w-full sm:w-auto">
               <Button
                 onClick={() => setModalAberto(true)}
-                className="w-full sm:w-auto rounded-xl bg-ink text-on-accent hover:bg-ink/85 flex items-center justify-center gap-2 px-5 py-2"
+                className="flex-1 sm:flex-none sm:w-auto rounded-xl bg-brand text-on-brand hover:bg-brand-hover flex items-center justify-center gap-2 px-5 py-2"
               >
                 <Plus className="size-4" />
                 Novo evento
               </Button>
+              <AlternarTema />
+              </div>
             </header>
 
             <div className="app-scroll-area">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div className="bg-raised border border-ink/[0.12] rounded-2xl p-5">
-                <p className="text-ink/65 text-sm">Eventos publicados</p>
+                <p className="text-ink-muted text-sm">Eventos publicados</p>
                 <h2 className="text-ink text-2xl font-semibold mt-1">
                   {eventos.length}
                 </h2>
               </div>
 
               <div className="bg-raised border border-ink/[0.12] rounded-2xl p-5">
-                <p className="text-ink/65 text-sm">Horas ofertadas</p>
+                <p className="text-ink-muted text-sm">Horas ofertadas</p>
                 <h2 className="text-ink text-2xl font-semibold mt-1">
                   {totalHoras}h
                 </h2>
@@ -376,18 +381,18 @@ const confirmarLogout = () => {
                     className="rounded-2xl p-8 text-center"
                     style={cardStyle}
                   >
-                    <p className="text-ink/75">Carregando eventos...</p>
+                    <p className="text-ink">Carregando eventos...</p>
                   </div>
                 ) : eventos.length === 0 ? (
                   <div
                     className="rounded-2xl p-8 text-center"
                     style={cardStyle}
                   >
-                    <CalendarDays className="size-10 text-ink/75 mx-auto mb-3" />
+                    <CalendarDays className="size-10 text-ink mx-auto mb-3" />
                     <h3 className="text-ink text-lg font-semibold mb-1">
                       Nenhum evento publicado
                     </h3>
-                    <p className="text-ink/75">
+                    <p className="text-ink">
                       Clique em novo evento para criar sua primeira publicação.
                     </p>
                   </div>
@@ -409,11 +414,11 @@ const confirmarLogout = () => {
                               {evento.titulo}
                             </h3>
 
-                            <p className="text-ink/75 text-sm mb-3 line-clamp-3">
+                            <p className="text-ink-muted text-sm mb-3 line-clamp-3">
                               {evento.descricao || "Sem descrição informada."}
                             </p>
 
-                            <div className="space-y-1 text-sm text-ink/75">
+                            <div className="space-y-1 text-sm text-ink-muted">
                               <p>
                                 Data:{" "}
                                 <span className="text-ink">
@@ -614,7 +619,7 @@ const confirmarLogout = () => {
                   variant="outline"
                   className="rounded-xl bg-transparent text-ink hover:bg-ink/[0.06]"
                   style={{
-                    borderColor: "#7d7d7d",
+                    borderColor: "var(--taupe)",
                     color: "var(--ink)",
                   }}
                 >
@@ -624,7 +629,7 @@ const confirmarLogout = () => {
                 <Button
                   type="submit"
                   disabled={salvando}
-                  className="rounded-xl bg-ink text-on-accent hover:bg-ink/85"
+                  className="rounded-xl bg-brand text-on-brand hover:bg-brand-hover"
                 >
                   {salvando ? "Salvando..." : "Publicar evento"}
                 </Button>
@@ -646,7 +651,7 @@ const confirmarLogout = () => {
                 <h2 className="text-xl font-semibold text-ink">
                   Alunos inscritos
                 </h2>
-                <p className="text-ink/60 text-sm mt-1">
+                <p className="text-ink-muted text-sm mt-1">
                   {eventoSelecionado?.titulo}
                 </p>
               </div>
@@ -662,7 +667,7 @@ const confirmarLogout = () => {
 
             {/* TOTAL */}
             <div className="shrink-0 rounded-xl bg-raised p-4 mb-5 border border-ink/[0.12]">
-              <p className="text-ink/60 text-xs uppercase tracking-wide">
+              <p className="text-ink-muted text-xs uppercase tracking-wide">
                 Total de inscritos
               </p>
               <p className="text-ink text-3xl font-semibold">
@@ -673,11 +678,11 @@ const confirmarLogout = () => {
             {/* LISTA */}
             <div className="grid min-h-0 grid-cols-1 gap-3 overflow-y-auto custom-scroll pr-2 sm:grid-cols-2">
               {loadingInscritos ? (
-                <p className="text-ink/75 text-center py-4">
+                <p className="text-ink text-center py-4">
                   Carregando inscritos...
                 </p>
               ) : inscritos.length === 0 ? (
-                <p className="text-ink/75 text-center py-4">
+                <p className="text-ink text-center py-4">
                   Nenhum aluno inscrito ainda.
                 </p>
               ) : (
@@ -688,7 +693,7 @@ const confirmarLogout = () => {
                   >
                     <p className="text-ink font-semibold">{item.nome}</p>
 
-                    <div className="mt-1 space-y-1 text-sm text-ink/75">
+                    <div className="mt-1 space-y-1 text-sm text-ink-muted">
                       <p>
                         {item.curso || "Análise e Desenvolvimento de Sistemas"}
                       </p>
@@ -712,7 +717,7 @@ const confirmarLogout = () => {
             {/* FOOTER */}
             <Button
               onClick={fecharModalInscritos}
-              className="w-full shrink-0 mt-6 rounded-xl bg-ink text-on-accent hover:bg-ink/85"
+              className="w-full shrink-0 mt-6 rounded-xl bg-brand text-on-brand hover:bg-brand-hover"
             >
               Fechar
             </Button>
@@ -729,7 +734,7 @@ const confirmarLogout = () => {
         <h2 className="text-ink text-xl font-semibold">
           Deseja realmente sair?
         </h2>
-        <p className="text-ink/65 text-sm mt-2">
+        <p className="text-ink-muted text-sm mt-2">
           Você será redirecionado para a tela de login.
         </p>
       </div>

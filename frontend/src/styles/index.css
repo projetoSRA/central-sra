@@ -10,9 +10,6 @@ body,
   background: var(--paper);
 }
 
-html {
-  color-scheme: dark;
-}
 
 body {
   min-height: 100vh;
@@ -21,7 +18,7 @@ body {
 }
 
 ::selection {
-  background: rgb(207 207 207 / 28%);
+  background: color-mix(in srgb, var(--accent-soft) 28%, transparent);
 }
 
 /* Foco de teclado visível em tudo que é clicável */
@@ -52,7 +49,7 @@ body {
   align-items: center;
   justify-content: center;
   padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
-  background: rgb(0 0 0 / 60%);
+  background: var(--overlay);
 }
 .app-modal-panel {
   display: flex;
@@ -62,7 +59,7 @@ body {
   max-height: calc(100dvh - 3rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
   overflow: hidden;
   border-radius: 0.875rem;
-  box-shadow: 0 24px 60px rgb(0 0 0 / 45%);
+  box-shadow: var(--shadow-pop);
 }
 .app-modal-header, .app-modal-footer {
   display: flex;
@@ -101,13 +98,13 @@ body {
 @layer base {
   * {
     scrollbar-width: thin;
-    scrollbar-color: rgb(237 237 237 / 22%) transparent;
+    scrollbar-color: color-mix(in srgb, var(--ink) 22%, transparent) transparent;
   }
 }
 
 .custom-scroll {
   scrollbar-width: thin;
-  scrollbar-color: rgb(207 207 207 / 55%) transparent;
+  scrollbar-color: color-mix(in srgb, var(--ink) 45%, transparent) transparent;
 }
 
 /* ------------------------------------------------------------------
@@ -124,7 +121,7 @@ body {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 0.875rem;
-  box-shadow: 0 8px 24px rgb(0 0 0 / 35%);
+  box-shadow: var(--shadow-pop);
 }
 .app-topbar::before {
   content: "";
@@ -172,7 +169,7 @@ body {
   padding: 0.25rem 0;
   font-size: 0.9375rem;
   font-weight: 500;
-  color: rgb(237 237 237 / 62%);
+  color: var(--ink-soft);
   transition: color 0.15s ease;
 }
 .app-navlink:hover {
@@ -211,7 +208,7 @@ body {
   width: 2px;
   height: var(--tick);
   border-radius: 1px 1px 0 0;
-  background: rgb(237 237 237 / 18%);
+  background: color-mix(in srgb, var(--ink) 18%, transparent);
   transition: background-color 0.4s ease;
 }
 .hour-ruler__ticks > span[data-major="true"] {
@@ -229,7 +226,7 @@ body {
   margin-top: 0.4rem;
   font-size: 0.75rem;
   font-variant-numeric: tabular-nums;
-  color: rgb(237 237 237 / 60%);
+  color: var(--ink-soft);
 }
 .hour-ruler--lg {
   --tick: 1.5rem;
@@ -241,7 +238,7 @@ body {
 
 /* Na tela de entrada a régua se preenche uma vez, da esquerda para a direita */
 @keyframes ruler-in {
-  from { background: rgb(237 237 237 / 18%); }
+  from { background: color-mix(in srgb, var(--ink) 18%, transparent); }
 }
 .hour-ruler--animated .hour-ruler__ticks > span[data-done="true"] {
   animation: ruler-in 0.5s ease both;
@@ -255,7 +252,7 @@ body {
 /* Foco visível nos campos nativos (os componentes de ui/ já têm o seu) */
 :where(input, select, textarea):not([data-slot]):focus-visible {
   border-color: var(--accent-soft);
-  box-shadow: 0 0 0 3px rgb(207 207 207 / 22%);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-soft) 30%, transparent);
 }
 
 :where(input, select, textarea):not([data-slot]):disabled {
@@ -293,7 +290,7 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover,
 input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover,
 input[type="month"]::-webkit-calendar-picker-indicator:hover {
   opacity: 1;
-  background-color: rgb(237 237 237 / 8%);
+  background-color: color-mix(in srgb, var(--ink) 8%, transparent);
 }
 
 /* Select nativo: seta própria */
@@ -301,25 +298,29 @@ select:not([multiple]):not([aria-hidden="true"]) {
   appearance: none;
   -webkit-appearance: none;
   padding-right: 2.5rem;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ededed' stroke-opacity='0.7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-opacity='0.7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.75rem center;
   background-size: 1rem;
   cursor: pointer;
 }
+:root[data-theme="dark"] select:not([multiple]):not([aria-hidden="true"]) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-opacity='0.7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+
 select option,
 select optgroup {
   background-color: var(--raised);
   color: var(--ink);
 }
 select option:disabled {
-  color: rgb(237 237 237 / 40%);
+  color: color-mix(in srgb, var(--ink) 50%, transparent);
 }
 
 /* Botão "Escolher arquivo" */
 input[type="file"] {
   cursor: pointer;
-  color: rgb(237 237 237 / 70%);
+  color: var(--ink-soft);
 }
 input[type="file"]::file-selector-button {
   margin-right: 0.75rem;
@@ -335,7 +336,7 @@ input[type="file"]::file-selector-button {
   transition: background-color 0.15s ease;
 }
 input[type="file"]::file-selector-button:hover {
-  background: rgb(237 237 237 / 7%);
+  background: color-mix(in srgb, var(--ink) 7%, transparent);
 }
 
 /* Preenchimento automático sem o fundo colorido do navegador */
@@ -346,4 +347,166 @@ textarea:-webkit-autofill,
 select:-webkit-autofill {
   transition: background-color 99999s ease-out 0s;
   caret-color: currentColor;
+}
+
+/* Placeholder: a mesma cor clara em todos os campos do sistema */
+::placeholder {
+  color: var(--placeholder);
+  opacity: 1;
+}
+
+/* ------------------------------------------------------------------
+   LOGIN — a régua da formação é a marca da tela: atividades de exemplo
+   penduradas na régua, como cotas de um desenho técnico, mostrando
+   como as horas se somam até a meta. Todo o resto fica quieto.
+------------------------------------------------------------------- */
+.login__topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 1.25rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.login__corpo {
+  flex: 1;
+  display: grid;
+  gap: 2.5rem;
+  align-content: center;
+  padding: 2.5rem 1.25rem 3rem;
+}
+
+.login__titulo {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 7.5vw, 3rem);
+  font-weight: 600;
+  font-variation-settings: "wdth" 100, "opsz" 96;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  max-width: 22ch;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.login__acesso {
+  justify-self: center;
+}
+
+.login__trilha {
+  margin: 0;
+}
+
+/* No celular as marcas não cabem: fica só a régua com a legenda */
+.trilha__marcas {
+  display: none;
+}
+
+.trilha__legenda {
+  margin-top: 0.9rem;
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+
+@media (min-width: 640px) {
+  .login__topo { margin: 0 2.5rem; }
+  .login__corpo { padding: 3rem 2.5rem 3.5rem; }
+
+  .trilha__marcas {
+    display: block;
+    position: relative;
+    height: 8.25rem;
+  }
+
+  .trilha__marca {
+    position: absolute;
+    left: var(--pos);
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding: 0 0 calc(0.6rem + var(--nivel) * 2.6rem) 0.55rem;
+    white-space: nowrap;
+    /* fio-guia: liga o nome da atividade ao traço da régua */
+    border-left: 1px solid var(--line-strong);
+  }
+
+  .trilha__nome {
+    font-size: 0.875rem;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+
+  .trilha__horas {
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent-soft);
+  }
+
+  /* Cada marca aparece quando a régua chega na sua hora */
+  .login__trilha .trilha__marca {
+    animation: marca-in 0.45s ease both;
+    animation-delay: var(--atraso);
+  }
+}
+
+@keyframes marca-in {
+  from { opacity: 0; transform: translateY(6px); }
+}
+
+@media (min-width: 1024px) {
+  .login__corpo {
+    grid-template-columns: minmax(0, 1fr) minmax(21rem, 26rem);
+    grid-template-rows: auto auto;
+    column-gap: clamp(3rem, 7vw, 7rem);
+    row-gap: 3.5rem;
+    padding: 3.5rem 2.5rem 3.5rem;
+  }
+  .login__chamada { grid-column: 1; grid-row: 1; align-self: end; }
+  .login__trilha { grid-column: 1; grid-row: 2; }
+  .login__acesso { grid-column: 2; grid-row: 1 / span 2; align-self: center; justify-self: end; }
+  .login__titulo { font-size: clamp(3rem, 3.6vw, 4.25rem); }
+}
+
+/* Celular: o formulário vem logo após a chamada; a régua fecha a página */
+@media (max-width: 1023px) {
+  .login__chamada { order: 1; }
+  .login__acesso { order: 2; }
+  .login__trilha { order: 3; }
+}
+
+/* ------------------------------------------------------------------
+   MODO CLARO/ESCURO — botão e transição
+------------------------------------------------------------------- */
+.alternar-tema {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0.625rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 0.5rem;
+  color: var(--ink);
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.alternar-tema:hover {
+  background: var(--hover);
+}
+.alternar-tema__metade {
+  transform-origin: 12px 12px;
+  transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* A troca de modo usa uma View Transition: o novo modo se abre em
+   círculo por cima do antigo (ver utils/tema.ts). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-new(root) {
+  z-index: 1;
 }

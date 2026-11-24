@@ -22,5 +22,14 @@ export const SUPABASE_SERVICE_ROLE_KEY = required("SUPABASE_SERVICE_ROLE_KEY");
 // Senha provisória das contas de aluno criadas pela coordenação (ver
 // utils/authDefaults.ts). Fica no .env para não ser publicada com o código.
 export const SENHA_PADRAO_PRIMEIRO_ACESSO = required("SENHA_PADRAO_PRIMEIRO_ACESSO");
-export const FRONTEND_URL =process.env.FRONTEND_URL || "http://localhost:5173";
+// O navegador envia a origem sem barra no fim ("http://localhost:5173"), e o
+// CORS compara texto exato: uma barra final ou espaço no .env bloqueia todas
+// as requisições. Por isso o valor é normalizado. Aceita várias origens
+// separadas por vírgula (ex.: "http://localhost:5173,https://meusite.com").
+const origens = (process.env.FRONTEND_URL || "http://localhost:5173")
+  .split(",")
+  .map((o) => o.trim().replace(/\/+$/, ""))
+  .filter(Boolean);
+
+export const FRONTEND_URL: string | string[] = origens.length === 1 ? origens[0] : origens;
 export const PORT = process.env.PORT || 3000;

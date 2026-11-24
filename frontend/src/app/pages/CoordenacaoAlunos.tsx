@@ -235,7 +235,7 @@ export default function CoordenacaoAlunos() {
               )}
 
               {resultadoImportacao && (
-                <div className="text-ink/95 space-y-2">
+                <div className="text-ink space-y-2">
                   <p className="font-semibold">
                     Importação concluída
                     {resultadoImportacao.turma.turma
@@ -247,7 +247,7 @@ export default function CoordenacaoAlunos() {
                       : ""}
                     .
                   </p>
-                  <p className="text-sm text-ink/75">
+                  <p className="text-sm text-ink-muted">
                     {resultadoImportacao.criados} aluno(s) novo(s) cadastrado(s), {""}
                     {resultadoImportacao.atualizados} atualizado(s) de {""}
                     {resultadoImportacao.totalNaPlanilha} linha(s) válida(s) na planilha.
@@ -280,13 +280,13 @@ export default function CoordenacaoAlunos() {
               </span>
 
               <div className="relative w-full sm:w-72">
-                <Search className="size-4 text-ink/65 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Search className="size-4 text-ink absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   value={busca}
                   onChange={(e) => setBusca(e.target.value)}
                   placeholder="Buscar por nome, RM ou RA..."
-                  className="w-full rounded-xl bg-raised border border-ink/15 py-2 pl-10 pr-3 text-ink placeholder:text-ink/60 outline-none"
+                  className="w-full rounded-xl bg-raised border border-ink/15 py-2 pl-10 pr-3 text-ink placeholder:text-placeholder outline-none"
                 />
               </div>
             </CardTitle>
@@ -321,17 +321,17 @@ export default function CoordenacaoAlunos() {
           <CardContent>
             {loading && (
               <div className="rounded-2xl border border-dashed border-ink/25 p-8 text-center">
-                <p className="text-ink/75">Carregando alunos...</p>
+                <p className="text-ink">Carregando alunos...</p>
               </div>
             )}
 
             {!loading && alunosFiltrados.length === 0 && (
               <div className="rounded-2xl border border-dashed border-ink/25 p-8 text-center">
-                <Users className="size-10 text-ink/75 mx-auto mb-3" />
+                <Users className="size-10 text-ink mx-auto mb-3" />
                 <h3 className="text-ink text-lg font-semibold mb-1">
                   Nenhum aluno encontrado
                 </h3>
-                <p className="text-ink/75">
+                <p className="text-ink">
                   Ajuste a busca ou os filtros aplicados.
                 </p>
               </div>
@@ -352,7 +352,7 @@ export default function CoordenacaoAlunos() {
                         <h3 className="text-ink font-semibold text-lg break-words">
                           {aluno.nome}
                         </h3>
-                        <p className="text-ink/75 text-sm break-words">{aluno.email}</p>
+                        <p className="text-ink-muted text-sm break-words">{aluno.email}</p>
                       </div>
 
                       {aluno.pendentes_count > 0 && (
@@ -363,26 +363,26 @@ export default function CoordenacaoAlunos() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-2 text-sm">
-                      <p className="text-ink/75">
+                      <p className="text-ink">
                         {aluno.nivel_ensino === "FACULDADE" ? "RA:" : "RM:"}{" "}
                         <span className="text-ink">
                           {aluno.nivel_ensino === "FACULDADE" ? aluno.ra : aluno.rm}
                         </span>
                       </p>
-                      <p className="text-ink/75">
+                      <p className="text-ink">
                         Curso:{" "}
                         <span className="text-ink">
                           {aluno.curso || "-"}
                           {aluno.serie_semestre ? ` · ${aluno.serie_semestre}` : ""}
                         </span>
                       </p>
-                      <p className="text-ink/75">
+                      <p className="text-ink">
                         Total de horas:{" "}
                         <span className="text-ink font-semibold">
                           {Number(aluno.total_horas || 0)}h
                         </span>
                       </p>
-                      <p className="text-ink/75">
+                      <p className="text-ink">
                         Última atividade:{" "}
                         <span className="text-ink">
                           {formatarData(aluno.ultima_atividade)}

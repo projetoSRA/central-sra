@@ -105,7 +105,7 @@ export default function PrimeiroAcesso() {
             <KeyRound className="size-5 text-blue-400" />
           </div>
           <h1 className="text-3xl font-semibold text-ink">Primeiro acesso</h1>
-          <p className="text-sm text-ink/65 mt-2">
+          <p className="text-sm text-ink-muted mt-2">
             Olá, {user.name}. Antes de continuar, defina uma senha nova e
             definitiva para sua conta.
           </p>
@@ -113,24 +113,24 @@ export default function PrimeiroAcesso() {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <Label className="text-ink/75 mb-2 block">Nova senha<Obrigatorio /></Label>
+            <Label className="text-ink mb-2 block">Nova senha<Obrigatorio /></Label>
             <Input
               type="password"
               value={novaSenha}
               onChange={(e) => setNovaSenha(e.target.value)}
-              className="h-12 rounded-lg bg-raised border-ink/20 text-ink placeholder:text-ink/40"
+              className="h-12 rounded-lg bg-raised border-ink/20 text-ink placeholder:text-placeholder"
               placeholder="Mínimo 6 caracteres"
               required
             />
           </div>
 
           <div>
-            <Label className="text-ink/75 mb-2 block">Confirmar nova senha<Obrigatorio /></Label>
+            <Label className="text-ink mb-2 block">Confirmar nova senha<Obrigatorio /></Label>
             <Input
               type="password"
               value={confirmarSenha}
               onChange={(e) => setConfirmarSenha(e.target.value)}
-              className="h-12 rounded-lg bg-raised border-ink/20 text-ink placeholder:text-ink/40"
+              className="h-12 rounded-lg bg-raised border-ink/20 text-ink placeholder:text-placeholder"
               placeholder="Repita a senha"
               required
             />
@@ -138,7 +138,7 @@ export default function PrimeiroAcesso() {
 
           <Button
             type="submit"
-            className="w-full h-12 rounded-lg bg-ink text-on-accent hover:bg-ink/85"
+            className="w-full h-12 rounded-lg bg-brand text-on-brand hover:bg-brand-hover"
             disabled={isLoading}
           >
             {isLoading ? <Loader2 className="animate-spin" /> : "Salvar e continuar"}
@@ -147,7 +147,7 @@ export default function PrimeiroAcesso() {
           <button
             type="button"
             onClick={handleCancelar}
-            className="w-full text-center text-sm text-ink/60 hover:text-ink/85 transition"
+            className="w-full text-center text-sm text-ink hover:text-ink transition"
           >
             Cancelar e sair
           </button>

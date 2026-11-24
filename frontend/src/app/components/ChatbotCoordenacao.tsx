@@ -114,13 +114,13 @@ export default function ChatbotCoordenacao() {
       <button
         type="button"
         onClick={() => setAberto((v) => !v)}
-        className="fixed bottom-24 right-4 z-[95] flex size-12 items-center justify-center rounded-full bg-blue-500 shadow-[0_10px_30px_rgba(207,207,207,0.35)] transition hover:bg-blue-600 lg:bottom-5 lg:right-5 lg:size-14"
+        className="fixed bottom-24 right-4 z-[95] flex size-12 items-center justify-center rounded-full bg-brand shadow-[0_10px_30px_rgba(128,128,128,0.35)] transition hover:bg-brand-hover lg:bottom-5 lg:right-5 lg:size-14"
         aria-label={aberto ? "Fechar assistente" : "Abrir assistente"}
       >
         {aberto ? (
-          <X className="size-6 text-on-accent" />
+          <X className="size-6 text-on-brand" />
         ) : (
-          <MessageCircle className="size-6 text-on-accent" />
+          <MessageCircle className="size-6 text-on-brand" />
         )}
       </button>
 
@@ -135,12 +135,12 @@ export default function ChatbotCoordenacao() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-ink font-semibold text-sm leading-tight">Assistente da Coordenação</p>
-              <p className="text-ink/65 text-xs leading-tight">Pendências, alunos e eventos</p>
+              <p className="text-ink-muted text-xs leading-tight">Pendências, alunos e eventos</p>
             </div>
             <button
               type="button"
               onClick={novaConversa}
-              className="flex size-8 shrink-0 items-center justify-center rounded-lg text-ink/65 transition hover:bg-ink/[0.06] hover:text-ink"
+              className="flex size-8 shrink-0 items-center justify-center rounded-lg text-ink transition hover:bg-ink/[0.06] hover:text-ink"
               title="Nova conversa"
               aria-label="Iniciar nova conversa"
             >
@@ -157,7 +157,7 @@ export default function ChatbotCoordenacao() {
                 <div
                   className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm whitespace-pre-line ${
                     mensagem.autor === "coordenacao"
-                      ? "bg-blue-500 text-on-accent rounded-br-sm"
+                      ? "bg-brand text-on-brand rounded-br-sm"
                       : "bg-ink/[0.06] text-ink rounded-bl-sm"
                   }`}
                 >
@@ -168,7 +168,7 @@ export default function ChatbotCoordenacao() {
 
             {enviando && (
               <div className="flex justify-start">
-                <div className="rounded-2xl rounded-bl-sm bg-ink/[0.06] text-ink/75 text-sm px-3 py-2">
+                <div className="rounded-2xl rounded-bl-sm bg-ink/[0.06] text-ink-muted text-sm px-3 py-2">
                   Digitando...
                 </div>
               </div>
@@ -184,7 +184,7 @@ export default function ChatbotCoordenacao() {
                   key={sugestao}
                   type="button"
                   onClick={() => enviarMensagem(sugestao)}
-                  className="text-xs px-3 py-1.5 rounded-full bg-ink/[0.06] hover:bg-ink/[0.12] text-ink/95 transition"
+                  className="text-xs px-3 py-1.5 rounded-full bg-ink/[0.06] hover:bg-ink/[0.12] text-ink transition"
                 >
                   {sugestao}
                 </button>
@@ -204,15 +204,15 @@ export default function ChatbotCoordenacao() {
               onChange={(event) => setEntrada(event.target.value)}
               placeholder="Digite sua pergunta..."
               disabled={enviando}
-              className="flex-1 bg-ink/[0.06] text-ink placeholder:text-ink/50 text-sm rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-400/50"
+              className="flex-1 bg-ink/[0.06] text-ink placeholder:text-placeholder text-sm rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-400/50"
             />
             <button
               type="submit"
               disabled={enviando || !entrada.trim()}
-              className="flex items-center justify-center size-9 rounded-xl bg-blue-500 hover:bg-blue-600 disabled:opacity-40 transition shrink-0"
+              className="flex items-center justify-center size-9 rounded-xl bg-brand hover:bg-brand-hover disabled:opacity-40 transition shrink-0"
               aria-label="Enviar"
             >
-              <Send className="size-4 text-on-accent" />
+              <Send className="size-4 text-on-brand" />
             </button>
           </form>
         </div>
