@@ -4,7 +4,7 @@ import { createPortal } from "react-dom";
 import { useNavigate } from "react-router";
 import { Button } from "./ui/button";
 import { User } from "../utils/auth";
-import { apiFetch, clearSession } from "../utils/api";
+import { apiFetch, clearSession, API_URL, mensagemDeErro } from "../utils/api";
 import { panelStyle } from "../../styles/uiStyles";
 import { formatarCurso, formatarNome } from "../utils/formatar";
 import {
@@ -17,6 +17,7 @@ import {
   FileBadge2,
   CalendarDays,
 } from "lucide-react";
+import { toast } from "sonner";
 
 type ActivePage = "inicio" | "horas" | "certificados" | "eventos";
 
@@ -37,7 +38,6 @@ export const glassCardStyle = {
   border: "1px solid var(--line)",
 };
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export default function AlunoLayout({
   user,
@@ -97,12 +97,12 @@ export default function AlunoLayout({
   const tiposPermitidos = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
 
   if (!tiposPermitidos.includes(file.type)) {
-    alert("Envie uma imagem PNG, JPG, JPEG ou WEBP.");
+    toast.error("Envie uma imagem PNG, JPG, JPEG ou WEBP.");
     return;
   }
 
   if (file.size > 15 * 1024 * 1024) {
-    alert("A imagem deve ter no máximo 15MB.");
+    toast.error("A imagem deve ter no máximo 15MB.");
     return;
   }
 
@@ -138,8 +138,8 @@ export default function AlunoLayout({
     };
 
     localStorage.setItem("user", JSON.stringify(userAtualizado));
-  } catch (error: any) {
-    alert(error.message || "Erro ao atualizar foto.");
+  } catch (error) {
+    toast.error(mensagemDeErro(error, "Erro ao atualizar foto."));
   } finally {
     setEnviandoFoto(false);
   }

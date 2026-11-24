@@ -24,6 +24,19 @@ const upload = multer({
   },
 });
 
+// Total de alunos para o resumo do painel da coordenação. Antes o painel
+// baixava a lista inteira (com horas de cada um) só para contar.
+// Fica antes das rotas "/:idAluno" para não ser capturada por elas.
+router.get("/contagem", requireAuth, requireRole("COORDENACAO"), async (_req, res) => {
+  try {
+    const result = await db.query(`SELECT COUNT(*)::int AS total FROM public.aluno`);
+    return res.json({ total: result.rows[0]?.total ?? 0 });
+  } catch (error) {
+    console.error("Erro ao contar alunos:", error);
+    return res.status(500).json({ message: "Erro ao contar alunos." });
+  }
+});
+
 // Lista os alunos para a tela "Alunos" da coordenação, com busca opcional
 // por nome, RM ou RA e um resumo de horas/eventos de cada um.
 // A busca por nome usa unaccent() (extensão do Postgres) pra achar, por

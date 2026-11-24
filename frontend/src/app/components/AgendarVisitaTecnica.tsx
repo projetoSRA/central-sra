@@ -3,9 +3,9 @@ import Obrigatorio from "./Obrigatorio";
 import { createPortal } from "react-dom";
 import { CalendarDays, X } from "lucide-react";
 import { Button } from "./ui/button";
-import { apiFetch } from "../utils/api";
+import { apiFetch, API_URL, lerJson, mensagemDeErro } from "../utils/api";
 import { panelStyle } from "../../styles/uiStyles";
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+import { toast } from "sonner";
 type TurmaVisita = {
   curso: string;
   nivel_ensino: string | null;
@@ -45,11 +45,11 @@ export default function AgendarVisitaTecnica({ onAgendado }: { onAgendado: () =>
     setModalVisitaAberto(true);
     try {
       const response = await apiFetch(`${API_URL}/visita/turmas`);
-      const data = await response.json();
+      const data = await lerJson(response);
       if (!response.ok) throw new Error(data.message || "Erro ao carregar turmas.");
       setTurmasVisita(data);
-    } catch (error: any) {
-      setErroTurmas(error.message || "Erro ao carregar turmas.");
+    } catch (error) {
+      setErroTurmas(mensagemDeErro(error, "Erro ao carregar turmas."));
     } finally {
       setCarregandoTurmas(false);
     }
@@ -63,12 +63,12 @@ export default function AgendarVisitaTecnica({ onAgendado }: { onAgendado: () =>
 
     const horas = Number(horasVisita);
     if (Number.isNaN(horas) || horas <= 0) {
-      alert("Informe uma quantidade de horas válida.");
+      toast.error("Informe uma quantidade de horas válida.");
       return;
     }
 
     if (!bimestreVisita) {
-      alert("Selecione o bimestre.");
+      toast.error("Selecione o bimestre.");
       return;
     }
 
@@ -90,7 +90,7 @@ export default function AgendarVisitaTecnica({ onAgendado }: { onAgendado: () =>
         }),
       });
 
-      const data = await response.json();
+      const data = await lerJson(response);
 
       if (!response.ok) {
         throw new Error(data.message || "Erro ao registrar visita.");
@@ -99,9 +99,9 @@ export default function AgendarVisitaTecnica({ onAgendado }: { onAgendado: () =>
 
       setModalVisitaAberto(false);
       onAgendado();
-      alert(data.message);
-    } catch (error: any) {
-      alert(error.message || "Erro ao registrar visita.");
+      toast.success(data?.message || "Visita registrada.");
+    } catch (error) {
+      toast.error(mensagemDeErro(error, "Erro ao registrar visita."));
     } finally {
       setSalvandoVisita(false);
     }

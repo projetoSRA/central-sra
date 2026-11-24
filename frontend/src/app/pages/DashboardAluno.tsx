@@ -3,12 +3,11 @@ import { useNavigate } from "react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { User } from "../utils/auth";
-import { apiFetch } from "../utils/api";
+import { apiFetch, API_URL, lerJson, mensagemDeErro } from "../utils/api";
 import AlunoLayout, { glassCardStyle } from "../components/AlunoLayout";
 import HourRuler from "../components/HourRuler";
 import { panelStyle, cardStyle, buttonGlass } from "../../styles/uiStyles";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 const META_HORAS = 200;
 
 import {
@@ -17,6 +16,8 @@ import {
   FileBadge2,
   Download,
 } from "lucide-react";
+import { exigirSessao } from "../utils/sessao";
+import { toast } from "sonner";
 
 type NewsItem = {
   id: number;
@@ -67,41 +68,26 @@ export default function DashboardAluno() {
   ];
 
   useEffect(() => {
-    const userData = localStorage.getItem("user");
+    const parsedUser = exigirSessao(navigate, "aluno");
+    if (!parsedUser) return;
 
-    if (!userData) {
-      navigate("/");
-      return;
-    }
-
-    const parsedUser = JSON.parse(userData) as User;
-
-    if (parsedUser.type !== "aluno") {
-      navigate("/");
-      return;
-    }
-
-    if (parsedUser.precisaTrocarSenha) {
-      navigate("/primeiro-acesso");
-      return;
-    }
 
     setUser(parsedUser);
 
     apiFetch(`${API_URL}/horas/aluno/${parsedUser.id}`)
-    .then(res => res.json())
+    .then(lerJson)
     .then(data => setHoras(data.totalHoras || 0))
     .catch(() => setHoras(0));
 
     apiFetch(`${API_URL}/certificados/aluno/${parsedUser.id}`)
-      .then((res) => res.json())
+      .then(lerJson)
       .then((data) => {
         if (!Array.isArray(data)) return;
         setCertificados(
-          data.filter((item: any) => item.tipo_arquivo !== "RELATORIO").length
+          data.filter((item: { tipo_arquivo?: string }) => item.tipo_arquivo !== "RELATORIO").length
         );
         setRelatorios(
-          data.filter((item: any) => item.tipo_arquivo === "RELATORIO").length
+          data.filter((item: { tipo_arquivo?: string }) => item.tipo_arquivo === "RELATORIO").length
         );
       })
       .catch(() => {
@@ -121,7 +107,7 @@ export default function DashboardAluno() {
       );
 
       if (!response.ok) {
-        const data = await response.json().catch(() => null);
+        const data = await lerJson(response);
         throw new Error(data?.message || "Erro ao gerar o portfólio.");
       }
 
@@ -134,8 +120,8 @@ export default function DashboardAluno() {
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
-    } catch (error: any) {
-      alert(error.message || "Erro ao gerar o portfólio.");
+    } catch (error) {
+      toast.error(mensagemDeErro(error, "Erro ao gerar o portfólio."));
     } finally {
       setGerandoPortfolio(false);
     }

@@ -5,7 +5,7 @@ import DashboardCoordenacao from "./pages/DashboardCoordenacao";
 import DashboardEmpresa from "./pages/DashboardEmpresa";
 import HorasAMS from "./pages/HorasAMS";
 import Eventos from "./pages/Eventos";
-import Certificados from "./pages/Certificados"; // 👈 ADICIONE ISSO
+import Certificados from "./pages/Certificados";
 import CoordenacaoAlunos from "./pages/CoordenacaoAlunos";
 import CoordenacaoAlunoDetalhe from "./pages/CoordenacaoAlunoDetalhe";
 import PrimeiroAcesso from "./pages/PrimeiroAcesso";
@@ -44,11 +44,11 @@ export const router = createBrowserRouter([
     Component: HorasAMS,
   },
   {
-    path: "/eventos", // rota
+    path: "/eventos",
     Component: Eventos,
   },
   {
-    path: "/certificados", // 👈 NOVA ROTA
+    path: "/certificados",
     Component: Certificados,
   },
 ]);

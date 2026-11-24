@@ -12,7 +12,7 @@ import {
 } from "../components/ui/card";
 import { User } from "../utils/auth";
 import { formatarDataCurta } from "../utils/comprovacao";
-import { apiFetch, clearSession } from "../utils/api";
+import { apiFetch, clearSession, API_URL, lerJson, mensagemDeErro } from "../utils/api";
 import { panelStyle, cardStyle, buttonGlass } from "../../styles/uiStyles";
 import {
   Building2,
@@ -23,6 +23,9 @@ import {
   Trash2,
   X,
 } from "lucide-react";
+import { exigirSessao } from "../utils/sessao";
+import { toast } from "sonner";
+import { confirmar } from "../components/Confirmacao";
 
 type EventoEmpresa = {
   id_evento: number;
@@ -47,7 +50,6 @@ type AlunoInscrito = {
   status_inscricao?: string;
 };
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 // As datas exibidas nesta tela vêm de colunas DATE (sem hora). Passar por
 // new Date() converte o fuso e mostra um dia antes do cadastrado; por isso
@@ -87,19 +89,9 @@ export default function DashboardEmpresa() {
   const [infoPalestrante, setInfoPalestrante] = useState("");
 
   useEffect(() => {
-    const userData = localStorage.getItem("user");
+    const parsedUser = exigirSessao(navigate, "empresa");
+    if (!parsedUser) return;
 
-    if (!userData) {
-      navigate("/");
-      return;
-    }
-
-    const parsedUser = JSON.parse(userData) as User;
-
-    if (parsedUser.type !== "empresa") {
-      navigate("/");
-      return;
-    }
 
     setUser(parsedUser);
   }, [navigate]);
@@ -112,7 +104,7 @@ export default function DashboardEmpresa() {
         setLoading(true);
 
         const response = await apiFetch(`${API_URL}/eventos/empresa/${user.id}`);
-        const data = await response.json();
+        const data = await lerJson(response);
 
         if (!response.ok) {
           throw new Error(data.message || "Erro ao carregar eventos");
@@ -179,7 +171,7 @@ export default function DashboardEmpresa() {
         }),
       });
 
-      const result = await response.json();
+      const result = await lerJson(response);
 
       if (!response.ok) {
         throw new Error(result.message || "Erro ao criar evento");
@@ -187,30 +179,30 @@ export default function DashboardEmpresa() {
 
       setEventos((prev) => [result.evento, ...prev]);
       fecharModal();
-    } catch (error: any) {
-      alert(error.message || "Erro ao criar evento.");
+    } catch (error) {
+      toast.error(mensagemDeErro(error, "Erro ao criar evento."));
     } finally {
       setSalvando(false);
     }
   };
 
   const excluirEvento = async (idEvento: number) => {
-    if (!confirm("Deseja realmente excluir este evento?")) return;
+    if (!(await confirmar({ titulo: "Excluir este evento?", descricao: "O evento sai da lista e as inscrições dele são canceladas. Não dá para desfazer.", confirmar: "Excluir", destrutiva: true }))) return;
 
     try {
       const response = await apiFetch(`${API_URL}/eventos/${idEvento}`, {
         method: "DELETE",
       });
 
-      const data = await response.json();
+      const data = await lerJson(response);
 
       if (!response.ok) {
         throw new Error(data.message || "Erro ao excluir evento");
       }
 
       setEventos((prev) => prev.filter((item) => item.id_evento !== idEvento));
-    } catch (error: any) {
-      alert(error.message || "Erro ao excluir evento.");
+    } catch (error) {
+      toast.error(mensagemDeErro(error, "Erro ao excluir evento."));
     }
   };
 
@@ -241,8 +233,8 @@ export default function DashboardEmpresa() {
       }
 
       setInscritos(data);
-    } catch (error: any) {
-      alert(error.message || "Erro ao carregar inscritos.");
+    } catch (error) {
+      toast.error(mensagemDeErro(error, "Erro ao carregar inscritos."));
     } finally {
       setLoadingInscritos(false);
     }

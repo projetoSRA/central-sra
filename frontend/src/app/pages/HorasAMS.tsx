@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { User } from "../utils/auth";
-import { apiFetch } from "../utils/api";
+import { apiFetch, API_URL, lerJson } from "../utils/api";
 import AlunoLayout from "../components/AlunoLayout";
 import HourRuler from "../components/HourRuler";
 import { panelStyle } from "../../styles/uiStyles";
+import { exigirSessao } from "../utils/sessao";
 
 type ResumoHoras = {
   totalCertificados: number;
@@ -20,7 +21,6 @@ type ResumoHoras = {
   horasRestantes: number;
 };
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 const plural = (n: number, singular: string, pluralForm: string) =>
   `${n} ${n === 1 ? singular : pluralForm}`;
@@ -34,24 +34,9 @@ export default function HorasAMS() {
   const [erro, setErro] = useState(false);
 
   useEffect(() => {
-    const userData = localStorage.getItem("user");
+    const parsedUser = exigirSessao(navigate, "aluno");
+    if (!parsedUser) return;
 
-    if (!userData) {
-      navigate("/");
-      return;
-    }
-
-    const parsedUser = JSON.parse(userData) as User;
-
-    if (parsedUser.type !== "aluno") {
-      navigate("/");
-      return;
-    }
-
-    if (parsedUser.precisaTrocarSenha) {
-      navigate("/primeiro-acesso");
-      return;
-    }
 
     setUser(parsedUser);
   }, [navigate]);
@@ -65,7 +50,7 @@ export default function HorasAMS() {
         setErro(false);
 
         const response = await apiFetch(`${API_URL}/horas/aluno/${user!.id}`);
-        const data = await response.json();
+        const data = await lerJson(response);
 
         if (!response.ok) {
           throw new Error(data.message || "Erro ao buscar horas");
