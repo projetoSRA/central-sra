@@ -317,7 +317,7 @@ export default function DashboardCoordenacao() {
             </div>
             <div className="min-w-0">
               <strong className="block text-xl leading-none text-ink">{value}</strong>
-              <span className="mt-1 block truncate text-xs text-ink/65">{label}</span>
+              <span className="mt-1 block truncate text-xs text-ink-muted">{label}</span>
             </div>
           </div>
         ))}
@@ -336,8 +336,8 @@ export default function DashboardCoordenacao() {
                   onClick={() => setAba("pendentes")}
                   className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition sm:flex-none sm:px-4 ${
                     aba === "pendentes"
-                      ? "bg-ink text-on-accent"
-                      : "text-ink/75 hover:text-ink"
+                      ? "bg-brand text-on-brand"
+                      : "text-ink hover:text-ink"
                   }`}
                   type="button"
                 >
@@ -348,8 +348,8 @@ export default function DashboardCoordenacao() {
                   onClick={() => setAba("eventos")}
                   className={`flex flex-1 items-center justify-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition sm:flex-none sm:px-4 ${
                     aba === "eventos"
-                      ? "bg-ink text-on-accent"
-                      : "text-ink/75 hover:text-ink"
+                      ? "bg-brand text-on-brand"
+                      : "text-ink hover:text-ink"
                   }`}
                   type="button"
                 >
@@ -361,8 +361,8 @@ export default function DashboardCoordenacao() {
                   onClick={() => setAba("historico")}
                   className={`flex flex-1 items-center justify-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition sm:flex-none sm:px-4 ${
                     aba === "historico"
-                      ? "bg-ink text-on-accent"
-                      : "text-ink/75 hover:text-ink"
+                      ? "bg-brand text-on-brand"
+                      : "text-ink hover:text-ink"
                   }`}
                   type="button"
                 >
@@ -378,7 +378,7 @@ export default function DashboardCoordenacao() {
               <>
                 {loadingPendentes && (
                   <div className="rounded-xl bg-raised border border-ink/[0.12] p-5 text-center sm:p-6">
-                    <p className="text-ink/75">Carregando pendências...</p>
+                    <p className="text-ink">Carregando pendências...</p>
                   </div>
                 )}
 
@@ -388,7 +388,7 @@ export default function DashboardCoordenacao() {
                     <h3 className="text-ink text-base font-semibold mb-1">
                       Nenhuma pendência
                     </h3>
-                    <p className="text-ink/70 text-sm">
+                    <p className="text-ink-muted text-sm">
                       Todos os certificados e relatórios já foram avaliados.
                     </p>
                   </div>
@@ -407,7 +407,7 @@ export default function DashboardCoordenacao() {
                             <h3 className="text-ink font-semibold text-lg break-words">
                               {item.titulo}
                             </h3>
-                            <p className="text-ink/75 text-sm break-words">
+                            <p className="text-ink-muted text-sm break-words">
                               {item.nome_aluno} · {item.email_aluno}
                             </p>
                           </div>
@@ -426,7 +426,7 @@ export default function DashboardCoordenacao() {
                         </div>
 
                         <div className="grid grid-cols-2 gap-2 text-sm mb-4">
-                          <p className="text-ink/75">
+                          <p className="text-ink">
                             Tipo:{" "}
                             <span className="text-ink">
                               {item.tipo_arquivo === "RELATORIO"
@@ -434,19 +434,19 @@ export default function DashboardCoordenacao() {
                                 : "Certificado"}
                             </span>
                           </p>
-                          <p className="text-ink/75">
+                          <p className="text-ink">
                             Data:{" "}
                             <span className="text-ink">
                               {formatarData(item.data_emissao)}
                             </span>
                           </p>
-                          <p className="text-ink/75">
+                          <p className="text-ink">
                             Horas solicitadas:{" "}
                             <span className="text-ink font-semibold">
                               {item.quantidade_horas}h
                             </span>
                           </p>
-                          <p className="text-ink/75">
+                          <p className="text-ink">
                             Arquivo:{" "}
                             <span className="text-ink">
                               {item.nome_arquivo || "-"}
@@ -456,7 +456,7 @@ export default function DashboardCoordenacao() {
 
                         <div className="flex flex-wrap items-center gap-3">
                           <div className="flex items-center gap-2">
-                            <label className="text-ink/75 text-sm">
+                            <label className="text-ink text-sm">
                               Horas a aprovar:
                             </label>
                             <input
@@ -516,17 +516,17 @@ export default function DashboardCoordenacao() {
               <>
                 {loadingHistorico && (
                   <div className="rounded-xl bg-raised border border-ink/[0.12] p-5 text-center sm:p-6">
-                    <p className="text-ink/75">Carregando histórico...</p>
+                    <p className="text-ink">Carregando histórico...</p>
                   </div>
                 )}
 
                 {!loadingHistorico && historico.length === 0 && (
                   <div className="rounded-xl bg-raised border border-ink/[0.12] p-5 text-center sm:p-6">
-                    <History className="size-10 text-ink/75 mx-auto mb-3" />
+                    <History className="size-10 text-ink mx-auto mb-3" />
                     <h3 className="text-ink text-lg font-semibold mb-1">
                       Nenhuma validação registrada
                     </h3>
-                    <p className="text-ink/75">
+                    <p className="text-ink">
                       As validações que você fizer aparecerão aqui.
                     </p>
                   </div>
@@ -543,11 +543,11 @@ export default function DashboardCoordenacao() {
                         <h3 className="text-ink font-semibold text-lg mb-1 break-words">
                           {item.titulo}
                         </h3>
-                        <p className="text-ink/75 text-sm mb-3 break-words">
+                        <p className="text-ink-muted text-sm mb-3 break-words">
                           {item.nome_aluno}
                         </p>
 
-                        <p className="text-ink/75 text-sm mb-1">
+                        <p className="text-ink-muted text-sm mb-1">
                           Status:{" "}
                           <span
                             className={`${statusClasse(
@@ -558,14 +558,14 @@ export default function DashboardCoordenacao() {
                           </span>
                         </p>
 
-                        <p className="text-ink/75 text-sm mb-1">
+                        <p className="text-ink-muted text-sm mb-1">
                           Horas validadas:{" "}
                           <span className="text-ink">
                             {item.horas_validadas}h
                           </span>
                         </p>
 
-                        <p className="text-ink/75 text-sm mb-1">
+                        <p className="text-ink-muted text-sm mb-1">
                           Data:{" "}
                           <span className="text-ink">
                             {formatarData(item.data_validacao)}
@@ -573,7 +573,7 @@ export default function DashboardCoordenacao() {
                         </p>
 
                         {item.observacao && (
-                          <p className="text-ink/75 text-sm break-words">
+                          <p className="text-ink-muted text-sm break-words">
                             Observação:{" "}
                             <span className="text-ink">
                               {item.observacao}
@@ -624,7 +624,7 @@ export default function DashboardCoordenacao() {
                 onClick={() => setRejeicaoAlvo(null)}
                 variant="outline"
                 className="rounded-xl bg-transparent text-ink hover:bg-ink/[0.06]"
-                style={{ borderColor: "#7d7d7d", color: "var(--ink)" }}
+                style={{ borderColor: "var(--taupe)", color: "var(--ink)" }}
               >
                 Cancelar
               </Button>

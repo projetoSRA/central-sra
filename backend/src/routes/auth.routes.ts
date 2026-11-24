@@ -54,7 +54,8 @@ router.post("/login", loginRateLimit, async (req, res) => {
 
         e.id_empresa,
         e.nome_empresa,
-        e.email AS email_empresa
+        e.email AS email_empresa,
+        e.cnpj AS cnpj_empresa
 
       FROM public.usuario u
       LEFT JOIN public.aluno a ON a.id_usuario = u.id_usuario
@@ -64,7 +65,12 @@ router.post("/login", loginRateLimit, async (req, res) => {
         AND (
           (u.tipo_usuario = 'ALUNO' AND (a.rm = $1 OR a.ra = $1))
           OR (u.tipo_usuario <> 'ALUNO' AND u.login = $1)
+          -- Empresa: o login salvo em usuario nem sempre é o CNPJ cadastrado
+          -- em empresa.cnpj (que fica com pontuação). Aceita os dois,
+          -- comparando só os dígitos do CNPJ.
+          OR (u.tipo_usuario = 'EMPRESA' AND regexp_replace(COALESCE(e.cnpj, ''), '[^0-9]', '', 'g') = $1)
         )
+      ORDER BY (u.login = $1) DESC
       LIMIT 1
       `,
       [identifier, tipoUsuario]
@@ -161,7 +167,7 @@ router.post("/login", loginRateLimit, async (req, res) => {
         id: usuario.id_empresa,
         name: usuario.nome_empresa,
         email: usuario.email_empresa,
-        identifier: usuario.login,
+        identifier: usuario.cnpj_empresa || usuario.login,
         type: "empresa",
       };
     }

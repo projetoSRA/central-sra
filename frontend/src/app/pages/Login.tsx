@@ -8,11 +8,13 @@ import { Label } from "../components/ui/label";
 import { Button } from "../components/ui/button";
 import { Loader2 } from "lucide-react";
 import HourRuler from "../components/HourRuler";
+import AlternarTema from "../components/AlternarTema";
 import { toast } from "sonner";
 import { Toaster } from "../components/ui/sonner";
 import { validateMatriculaAluno, validateLogin, validateCNPJ, validatePassword } from "../utils/validators";
 import { authenticateUser } from "../utils/auth";
 import { saveSession } from "../utils/api";
+import { mascaraCNPJ } from "../utils/formatar";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -102,16 +104,17 @@ if (userType === "empresa") {
     e.target.value = value.slice(0, 12);
   };
 
+  // Máscara 00.000.000/0000-00 enquanto digita; no envio só os dígitos vão
+  // para o backend (ver handleLogin).
   const handleCNPJInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, "");
-    setCnpj(value);
+    setCnpj(mascaraCNPJ(e.target.value));
   };
 
   const campo =
-    "h-12 rounded-lg bg-raised border-ink/20 text-ink placeholder:text-ink/40";
-  const rotulo = "text-ink/75 mb-2 block";
+    "h-12 rounded-lg bg-raised border-ink/20 text-ink placeholder:text-placeholder";
+  const rotulo = "text-ink mb-2 block";
   const aba =
-    "rounded-md text-sm text-ink/65 data-[state=active]:bg-raised data-[state=active]:text-ink data-[state=active]:shadow-sm";
+    "rounded-md text-sm text-ink data-[state=active]:bg-raised data-[state=active]:text-ink data-[state=active]:shadow-sm";
 
   const erro = (mensagem?: string) =>
     mensagem ? (
@@ -122,7 +125,7 @@ if (userType === "empresa") {
 
   const botaoEntrar = (
     <Button
-      className="w-full h-12 rounded-lg bg-ink text-on-accent hover:bg-ink/85"
+      className="w-full h-12 rounded-lg bg-brand text-on-brand hover:bg-brand-hover"
       disabled={isLoading}
     >
       {isLoading ? <Loader2 className="animate-spin" /> : "Entrar"}
@@ -130,44 +133,70 @@ if (userType === "empresa") {
   );
 
   return (
-    <div className="min-h-screen min-h-[100dvh] bg-paper p-3 sm:p-5 flex">
+    <div className="login min-h-screen min-h-[100dvh] bg-paper flex flex-col">
       <Toaster />
 
-      {/* Moldura da página: um fio contornando todo o conteúdo */}
-      <div className="flex w-full flex-col rounded-lg border border-ink/25">
-        <header className="mx-5 sm:mx-10 flex items-baseline justify-between gap-4 border-b border-ink/25 py-5">
-          <span className="font-display text-xl sm:text-2xl font-bold tracking-tight text-ink">
-            Central SRA
-          </span>
-          <span className="hidden sm:block text-sm text-ink/60">
+      <header className="login__topo">
+        <span className="font-display text-xl sm:text-2xl font-bold tracking-tight text-ink">
+          Central SRA
+        </span>
+        <div className="flex items-center gap-4">
+          <span className="hidden sm:block text-sm text-ink-muted">
             Horas, certificados e eventos
           </span>
-        </header>
+          <AlternarTema />
+        </div>
+      </header>
 
-        <main className="flex-1 grid items-center gap-10 lg:gap-16 px-5 sm:px-10 py-10 lg:py-14 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
-          <section className="max-w-2xl">
-            <h1 className="font-display text-4xl sm:text-5xl xl:text-6xl font-semibold leading-[1.05] tracking-tight text-ink">
-              Cada hora da sua formação, registrada em um só lugar.
-            </h1>
+      <main className="login__corpo">
+        <section className="login__chamada">
+          <h1 className="login__titulo">
+            Cada hora da sua formação, registrada em um só lugar.
+          </h1>
 
-            <p className="mt-5 max-w-xl text-base sm:text-lg leading-relaxed text-ink/70">
-              Envie certificados e relatórios, inscreva-se em eventos e
-              acompanhe quanto falta para completar a carga horária.
-            </p>
+          <p className="mt-6 max-w-[34rem] text-base sm:text-lg leading-relaxed text-ink-muted">
+            Envie certificados e relatórios, inscreva-se em eventos e
+            acompanhe quanto falta para completar a carga horária.
+          </p>
+        </section>
 
-            <div className="mt-10 lg:mt-14 hidden sm:block" aria-hidden="true">
-              <HourRuler value={130} total={200} size="lg" animated />
-            </div>
-          </section>
+        {/* A régua da formação: um exemplo de como palestras, visitas e
+            cursos somam horas até a meta. É a marca visual da tela. */}
+        <figure className="login__trilha" aria-label="Exemplo: 130 de 200 horas somadas com atividades">
+          <div className="trilha__marcas" aria-hidden="true">
+            {ATIVIDADES_EXEMPLO.map((a, i) => (
+              <div
+                key={a.nome}
+                className="trilha__marca"
+                style={
+                  {
+                    "--pos": `${(a.ate / 200) * 100}%`,
+                    "--nivel": i % 3,
+                    "--atraso": `${Math.round((a.ate / 200) * 40) * 28 + 450}ms`,
+                  } as React.CSSProperties
+                }
+              >
+                <span className="trilha__nome">{a.nome}</span>
+                <span className="trilha__horas">+{a.horas}h</span>
+              </div>
+            ))}
+          </div>
 
-          <section
-            className="w-full max-w-md justify-self-center lg:justify-self-end rounded-2xl border border-ink/15 bg-surface p-6 sm:p-8"
-            aria-labelledby="titulo-entrar"
-          >
+          <HourRuler value={130} total={200} size="lg" animated />
+
+          <figcaption className="trilha__legenda">
+            Exemplo de um aluno: 130 de 200 horas. Faltam 70.
+          </figcaption>
+        </figure>
+
+        <section
+          className="login__acesso w-full max-w-md rounded-2xl border border-ink/15 bg-surface p-6 sm:p-8"
+          aria-labelledby="titulo-entrar"
+        >
             <h2 id="titulo-entrar" className="text-2xl font-semibold text-ink">
               Entrar
             </h2>
-            <p className="mt-1 mb-6 text-sm text-ink/65">
+            <p className="mt-1 mb-6 text-sm text-ink-muted">
               Escolha seu perfil e informe seus dados de acesso.
             </p>
 
@@ -262,6 +291,8 @@ if (userType === "empresa") {
                     <Input
                       name="identifier"
                       inputMode="numeric"
+                      autoComplete="username"
+                      maxLength={18}
                       value={cnpj}
                       onChange={handleCNPJInput}
                       className={campo}
@@ -291,8 +322,18 @@ if (userType === "empresa") {
               </TabsContent>
             </Tabs>
           </section>
-        </main>
-      </div>
+      </main>
     </div>
   );
 }
+
+// Atividades fictícias que ilustram a régua: cada uma termina na hora
+// acumulada (`ate`) em que aparece marcada.
+const ATIVIDADES_EXEMPLO = [
+  { nome: "Palestra de carreira", horas: 4, ate: 4 },
+  { nome: "Visita técnica", horas: 8, ate: 12 },
+  { nome: "Curso online", horas: 30, ate: 42 },
+  { nome: "Hackathon", horas: 24, ate: 66 },
+  { nome: "Monitoria", horas: 40, ate: 106 },
+  { nome: "Projeto social", horas: 24, ate: 130 },
+];

@@ -126,7 +126,7 @@ export default function HorasAMS() {
         </h2>
 
         {loading ? (
-          <p className="mt-6 text-ink/65">Carregando horas…</p>
+          <p className="mt-6 text-ink">Carregando horas…</p>
         ) : erro ? (
           <p role="alert" className="mt-6 text-red-400">
             Não foi possível carregar suas horas. Recarregue a página para
@@ -139,9 +139,9 @@ export default function HorasAMS() {
               <div className="mb-8 flex flex-wrap items-end gap-x-6 gap-y-2">
                 <p className="font-display font-semibold leading-none tracking-tight text-ink tabular-nums text-7xl sm:text-8xl">
                   {totalHoras}
-                  <span className="text-3xl sm:text-4xl text-ink/45">h</span>
+                  <span className="text-3xl sm:text-4xl text-ink">h</span>
                 </p>
-                <p className="pb-2 text-ink/70">
+                <p className="pb-2 text-ink">
                   de {totalAlvo}h.{" "}
                   {horasRestantes > 0
                     ? `Faltam ${horasRestantes}h para completar a carga total.`
@@ -161,7 +161,7 @@ export default function HorasAMS() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="border-b border-ink/25 text-sm text-ink/60">
+                    <tr className="border-b border-ink/25 text-sm text-ink">
                       <th className="py-2.5 pr-4 font-medium">Categoria</th>
                       <th className="hidden sm:table-cell py-2.5 pr-4 font-medium">
                         Registros
@@ -178,11 +178,11 @@ export default function HorasAMS() {
                       <tr key={categoria.nome} className="border-b border-ink/10">
                         <td className="py-3.5 pr-4 text-ink">
                           <span className="font-medium">{categoria.nome}</span>
-                          <span className="block sm:hidden text-sm text-ink/60">
+                          <span className="block sm:hidden text-sm text-ink-muted">
                             {categoria.detalhe}
                           </span>
                         </td>
-                        <td className="hidden sm:table-cell py-3.5 pr-4 text-ink/70">
+                        <td className="hidden sm:table-cell py-3.5 pr-4 text-ink">
                           {categoria.detalhe}
                         </td>
                         <td className="hidden md:table-cell py-3.5 pr-4">

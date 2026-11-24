@@ -4,12 +4,27 @@
     <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <meta name="theme-color" content="#252525" />
+      <meta name="theme-color" content="#f2f2f2" />
       <title>Central SRA</title>
+      <!-- Aplica o modo (claro/escuro) antes da primeira pintura, para a
+           tela não piscar no modo errado. Escolha salva > preferência do
+           sistema. Ver src/app/utils/tema.ts. -->
+      <script>
+        (function () {
+          var tema;
+          try { tema = localStorage.getItem("tema"); } catch (e) {}
+          if (tema !== "light" && tema !== "dark") {
+            tema = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          }
+          document.documentElement.setAttribute("data-theme", tema);
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute("content", tema === "dark" ? "#000000" : "#f2f2f2");
+        })();
+      </script>
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
       <link
-        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..700&family=Instrument+Sans:wght@400..700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,500..700&family=Instrument+Sans:wght@400..700&display=swap"
         rel="stylesheet"
       />
     </head>

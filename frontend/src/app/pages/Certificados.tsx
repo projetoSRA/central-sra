@@ -307,7 +307,7 @@ export default function Certificados() {
     if (loading) {
       return (
         <div className="rounded-2xl border border-dashed border-ink/25 p-8 text-center">
-          <p className="text-ink/75">Carregando arquivos...</p>
+          <p className="text-ink">Carregando arquivos...</p>
         </div>
       );
     }
@@ -315,9 +315,9 @@ export default function Certificados() {
     if (lista.length === 0) {
       return (
         <div className="rounded-2xl border border-dashed border-ink/25 p-8 text-center">
-          <FileText className="size-10 text-ink/75 mx-auto mb-3" />
+          <FileText className="size-10 text-ink mx-auto mb-3" />
           <h3 className="text-ink text-lg font-semibold mb-1">{vazio}</h3>
-          <p className="text-ink/75">
+          <p className="text-ink">
             Clique em importar para cadastrar um novo arquivo.
           </p>
         </div>
@@ -337,7 +337,7 @@ export default function Certificados() {
                   {item.titulo}
                 </h3>
 
-                <p className="text-ink/75 text-sm mb-1">
+                <p className="text-ink-muted text-sm mb-1">
                   Horas:{" "}
                   <span className="text-ink font-semibold">
                     {item.status.toUpperCase() === "APROVADO"
@@ -346,21 +346,21 @@ export default function Certificados() {
                   </span>
                 </p>
 
-                <p className="text-ink/75 text-sm mb-1">
+                <p className="text-ink-muted text-sm mb-1">
                   Data:{" "}
                   <span className="text-ink">
                     {formatarData(item.dataEmissao)}
                   </span>
                 </p>
 
-                <p className="min-w-0 text-ink/75 text-sm mb-1">
+                <p className="min-w-0 text-ink-muted text-sm mb-1">
                   Arquivo:{" "}
                   <span className="[overflow-wrap:anywhere] text-ink">
                     {item.arquivoNome}
                   </span>
                 </p>
 
-                <p className="text-ink/75 text-sm">
+                <p className="text-ink-muted text-sm">
                   Status:{" "}
                   <span className={`${statusClasse(item.status)} font-semibold`}>
                     {item.status}
@@ -418,8 +418,8 @@ export default function Certificados() {
                 onClick={() => setFiltro("certificado")}
                 className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition sm:flex-none sm:px-4 ${
                   filtro === "certificado"
-                    ? "bg-ink text-on-accent"
-                    : "text-ink/75 hover:text-ink"
+                    ? "bg-brand text-on-brand"
+                    : "text-ink hover:text-ink"
                 }`}
               >
                 Certificados
@@ -429,8 +429,8 @@ export default function Certificados() {
                 onClick={() => setFiltro("relatorio")}
                 className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition sm:flex-none sm:px-4 ${
                   filtro === "relatorio"
-                    ? "bg-ink text-on-accent"
-                    : "text-ink/75 hover:text-ink"
+                    ? "bg-brand text-on-brand"
+                    : "text-ink hover:text-ink"
                 }`}
               >
                 Relatórios
@@ -439,7 +439,7 @@ export default function Certificados() {
 
             <Button
               onClick={() => abrirModal(filtro)}
-              className="w-full sm:w-auto rounded-xl bg-ink text-on-accent hover:bg-ink/85 flex items-center justify-center gap-2"
+              className="w-full sm:w-auto rounded-xl bg-brand text-on-brand hover:bg-brand-hover flex items-center justify-center gap-2"
             >
               <Upload className="size-4" />
               {filtro === "certificado"
@@ -588,7 +588,7 @@ export default function Certificados() {
                       placeholder="Escreva o relato da atividade (pode incluir RESULTADOS e AGRADECIMENTOS, como no portfólio bimestral)."
                     />
 
-                    <p className="text-ink/65 text-sm mt-2">
+                    <p className="text-ink-muted text-sm mt-2">
                       Esse texto é usado depois para montar o Portfólio do Aluno automaticamente.
                     </p>
                   </div>
@@ -610,7 +610,7 @@ export default function Certificados() {
                   className="w-full rounded-xl bg-raised border border-ink/15 p-3 text-ink"
                 />
 
-                <p className="text-ink/65 text-sm mt-2">
+                <p className="text-ink-muted text-sm mt-2">
                   {tipoSelecionado === "certificado"
                     ? "Permitido: imagem ou PDF."
                     : "Permitido: PDF, TXT, DOC ou DOCX."}
@@ -625,7 +625,7 @@ export default function Certificados() {
                   variant="outline"
                   className="rounded-xl bg-transparent text-ink hover:bg-ink/[0.06]"
                   style={{
-                    borderColor: "#7d7d7d",
+                    borderColor: "var(--taupe)",
                     color: "var(--ink)",
                   }}
                 >
@@ -635,7 +635,7 @@ export default function Certificados() {
                 <Button
                   type="submit"
                   disabled={salvando}
-                  className="rounded-xl bg-ink text-on-accent hover:bg-ink/85"
+                  className="rounded-xl bg-brand text-on-brand hover:bg-brand-hover"
                 >
                   {salvando ? "Salvando..." : "Salvar"}
                 </Button>

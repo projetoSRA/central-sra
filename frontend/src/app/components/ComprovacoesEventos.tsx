@@ -136,11 +136,11 @@ export function EstenderPrazoModal({
           <div className="app-modal-fields">
             <div className="sm:col-span-2">
               <p className="text-ink font-medium break-words">{alvo.titulo}</p>
-              <p className="text-ink/75 text-sm break-words">
+              <p className="text-ink-muted text-sm break-words">
                 {alvo.nome_aluno ? `${alvo.nome_aluno} · ` : ""}
                 Prazo atual: {formatarDataCurta(alvo.prazo_comprovacao)}
               </p>
-              <p className="text-ink/65 text-sm mt-1">
+              <p className="text-ink-muted text-sm mt-1">
                 O aluno poderá enviar (ou reenviar) a comprovação até o fim da nova data.
               </p>
             </div>
@@ -192,7 +192,7 @@ export function EstenderPrazoModal({
               disabled={salvando}
               variant="outline"
               className="rounded-xl bg-transparent text-ink hover:bg-ink/[0.06]"
-              style={{ borderColor: "#7d7d7d", color: "var(--ink)" }}
+              style={{ borderColor: "var(--taupe)", color: "var(--ink)" }}
             >
               Cancelar
             </Button>
@@ -200,7 +200,7 @@ export function EstenderPrazoModal({
             <Button
               type="submit"
               disabled={salvando}
-              className="rounded-xl bg-ink text-on-accent hover:bg-ink/85"
+              className="rounded-xl bg-brand text-on-brand hover:bg-brand-hover"
             >
               {salvando ? "Salvando..." : "Estender prazo"}
             </Button>
@@ -395,8 +395,8 @@ export default function ComprovacoesEventos({
             aria-pressed={filtro === chave}
             className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
               filtro === chave
-                ? "bg-ink text-on-accent"
-                : "bg-ink/[0.06] text-ink/75 hover:text-ink"
+                ? "bg-brand text-on-brand"
+                : "bg-ink/[0.06] text-ink hover:text-ink"
             }`}
           >
             {rotulo} ({grupos[chave].length})
@@ -404,14 +404,14 @@ export default function ComprovacoesEventos({
         ))}
       </div>
 
-      <p className="text-ink/65 text-sm">
+      <p className="text-ink-muted text-sm">
         As horas de um evento só contam para o aluno depois que a comprovação enviada dentro do
         prazo for aprovada aqui.
       </p>
 
       {carregando && (
         <div className="rounded-xl bg-raised border border-ink/[0.12] p-5 text-center sm:p-6">
-          <p className="text-ink/75">Carregando comprovações...</p>
+          <p className="text-ink">Carregando comprovações...</p>
         </div>
       )}
 
@@ -423,8 +423,8 @@ export default function ComprovacoesEventos({
 
       {!carregando && !erro && lista.length === 0 && (
         <div className="rounded-xl bg-raised border border-ink/[0.12] p-5 text-center sm:p-6">
-          <Mic2 className="size-8 text-ink/75 mx-auto mb-2" />
-          <p className="text-ink/70 text-sm">{vazio[filtro]}</p>
+          <Mic2 className="size-8 text-ink mx-auto mb-2" />
+          <p className="text-ink-muted text-sm">{vazio[filtro]}</p>
         </div>
       )}
 
@@ -444,7 +444,7 @@ export default function ComprovacoesEventos({
                 <div className="flex items-start justify-between gap-4 mb-3">
                   <div className="min-w-0">
                     <h3 className="text-ink font-semibold text-lg break-words">{item.titulo}</h3>
-                    <p className="text-ink/75 text-sm break-words">
+                    <p className="text-ink-muted text-sm break-words">
                       {item.nome_aluno} · {item.email_aluno}
                     </p>
                   </div>
@@ -464,13 +464,13 @@ export default function ComprovacoesEventos({
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 text-sm mb-3">
-                  <p className="text-ink/75">
+                  <p className="text-ink">
                     Evento em: <span className="text-ink">{formatarDataCurta(item.data_evento)}</span>
                   </p>
-                  <p className="text-ink/75">
+                  <p className="text-ink">
                     Horas: <span className="text-ink font-semibold">{item.carga_horaria}h</span>
                   </p>
-                  <p className="text-ink/75">
+                  <p className="text-ink">
                     Prazo:{" "}
                     <span className="text-ink">
                       {formatarDataCurta(item.prazo_comprovacao)}
@@ -479,11 +479,11 @@ export default function ComprovacoesEventos({
                         : " (encerrado)"}
                     </span>
                   </p>
-                  <p className="text-ink/75">
+                  <p className="text-ink">
                     Situação: <span className={`${rotulo.classe} font-semibold`}>{rotulo.texto}</span>
                   </p>
                   {item.comprovacao_enviada_em && (
-                    <p className="text-ink/75 col-span-2 break-words">
+                    <p className="text-ink col-span-2 break-words">
                       Enviado em:{" "}
                       <span className="text-ink">
                         {new Date(item.comprovacao_enviada_em).toLocaleString("pt-BR", {
@@ -495,13 +495,13 @@ export default function ComprovacoesEventos({
                     </p>
                   )}
                   {item.prazo_estendido_ate && (
-                    <p className="text-ink/75 col-span-2 break-words">
+                    <p className="text-ink col-span-2 break-words">
                       Prazo estendido:{" "}
                       <span className="text-ink">{item.prazo_motivo || "sem motivo registrado"}</span>
                     </p>
                   )}
                   {item.comprovacao_motivo_reprovacao && (
-                    <p className="text-ink/75 col-span-2 break-words">
+                    <p className="text-ink col-span-2 break-words">
                       Motivo da reprovação:{" "}
                       <span className="text-ink">{item.comprovacao_motivo_reprovacao}</span>
                     </p>
@@ -521,11 +521,11 @@ export default function ComprovacoesEventos({
                         ? ` · ${new Date(item.pedido_prazo_em).toLocaleDateString("pt-BR")}`
                         : ""}
                     </p>
-                    <p className="mt-1 max-h-32 overflow-y-auto text-ink/90 whitespace-pre-wrap break-words">
+                    <p className="mt-1 max-h-32 overflow-y-auto text-ink whitespace-pre-wrap break-words">
                       {item.pedido_prazo_mensagem}
                     </p>
                     {item.pedido_prazo_status === "RECUSADO" && item.pedido_prazo_resposta && (
-                      <p className="mt-2 text-ink/75 break-words">
+                      <p className="mt-2 text-ink break-words">
                         Resposta: <span className="text-ink">{item.pedido_prazo_resposta}</span>
                       </p>
                     )}
@@ -533,7 +533,7 @@ export default function ComprovacoesEventos({
                 )}
 
                 {item.comprovacao_texto && (
-                  <div className="mb-3 max-h-40 overflow-y-auto rounded-xl bg-ink/[0.04] p-3 text-sm text-ink/90 whitespace-pre-wrap break-words">
+                  <div className="mb-3 max-h-40 overflow-y-auto rounded-xl bg-ink/[0.04] p-3 text-sm text-ink-muted whitespace-pre-wrap break-words">
                     {item.comprovacao_texto}
                   </div>
                 )}
@@ -632,7 +632,7 @@ export default function ComprovacoesEventos({
               <div className="app-modal-fields">
                 <div className="sm:col-span-2">
                   <p className="text-ink font-medium break-words">{reprovacaoAlvo.titulo}</p>
-                  <p className="text-ink/75 text-sm break-words">{reprovacaoAlvo.nome_aluno}</p>
+                  <p className="text-ink-muted text-sm break-words">{reprovacaoAlvo.nome_aluno}</p>
                 </div>
 
                 <div className="sm:col-span-2">
@@ -649,7 +649,7 @@ export default function ComprovacoesEventos({
                     className="w-full rounded-xl bg-raised border border-ink/15 p-3 text-ink outline-none"
                     placeholder="Explique ao aluno por que a comprovação não foi aceita..."
                   />
-                  <p className="text-ink/65 text-sm mt-2">
+                  <p className="text-ink-muted text-sm mt-2">
                     O aluno vê este motivo e pode reenviar enquanto o prazo estiver aberto.
                   </p>
                 </div>
@@ -667,7 +667,7 @@ export default function ComprovacoesEventos({
                   onClick={() => setReprovacaoAlvo(null)}
                   variant="outline"
                   className="rounded-xl bg-transparent text-ink hover:bg-ink/[0.06]"
-                  style={{ borderColor: "#7d7d7d", color: "var(--ink)" }}
+                  style={{ borderColor: "var(--taupe)", color: "var(--ink)" }}
                 >
                   Cancelar
                 </Button>
@@ -720,9 +720,9 @@ export default function ComprovacoesEventos({
               <div className="app-modal-fields">
                 <div className="sm:col-span-2">
                   <p className="text-ink font-medium break-words">{recusaAlvo.titulo}</p>
-                  <p className="text-ink/75 text-sm break-words">{recusaAlvo.nome_aluno}</p>
+                  <p className="text-ink-muted text-sm break-words">{recusaAlvo.nome_aluno}</p>
                   {recusaAlvo.pedido_prazo_mensagem && (
-                    <p className="mt-2 rounded-xl bg-ink/[0.04] p-3 text-sm text-ink/90 whitespace-pre-wrap break-words">
+                    <p className="mt-2 rounded-xl bg-ink/[0.04] p-3 text-sm text-ink-muted whitespace-pre-wrap break-words">
                       {recusaAlvo.pedido_prazo_mensagem}
                     </p>
                   )}
@@ -742,7 +742,7 @@ export default function ComprovacoesEventos({
                     className="w-full rounded-xl bg-raised border border-ink/15 p-3 text-ink outline-none"
                     placeholder="Explique por que o prazo não será reaberto..."
                   />
-                  <p className="text-ink/65 text-sm mt-2">
+                  <p className="text-ink-muted text-sm mt-2">
                     Para aceitar o pedido, feche esta janela e use “Estender prazo”.
                   </p>
                 </div>
@@ -761,7 +761,7 @@ export default function ComprovacoesEventos({
                   disabled={recusando}
                   variant="outline"
                   className="rounded-xl bg-transparent text-ink hover:bg-ink/[0.06]"
-                  style={{ borderColor: "#7d7d7d", color: "var(--ink)" }}
+                  style={{ borderColor: "var(--taupe)", color: "var(--ink)" }}
                 >
                   Cancelar
                 </Button>

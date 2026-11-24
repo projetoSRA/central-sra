@@ -27,7 +27,7 @@ type Inscricao = ComprovacaoInfo & { id_evento: number };
 function seloEntrega(situacao: SituacaoComprovacao, prazoAberto: boolean) {
   switch (situacao) {
     case "aguardando_evento":
-      return { texto: "Entrega ainda não liberada", classe: "bg-ink/[0.06] text-ink/80", Icone: Hourglass };
+      return { texto: "Entrega ainda não liberada", classe: "bg-ink/[0.06] text-ink", Icone: Hourglass };
     case "aberto":
       return { texto: "Entrega disponível", classe: "bg-amber-400/15 text-amber-200", Icone: Upload };
     case "pendente":
@@ -316,15 +316,15 @@ export default function Eventos() {
         <CardContent>
   {loading ? (
     <div className="rounded-2xl border border-dashed border-ink/25 p-6 text-center">
-      <p className="text-ink/75">Carregando eventos...</p>
+      <p className="text-ink">Carregando eventos...</p>
     </div>
   ) : eventos.length === 0 ? (
     <div className="rounded-2xl border border-dashed border-ink/25 p-6 text-center">
-      <Mic2 className="size-9 text-ink/75 mx-auto mb-3" />
+      <Mic2 className="size-9 text-ink mx-auto mb-3" />
       <h3 className="text-ink text-lg font-semibold mb-1">
         Nenhum evento disponível
       </h3>
-      <p className="text-ink/75">
+      <p className="text-ink">
         Aguarde uma empresa publicar novos eventos.
       </p>
     </div>
@@ -360,7 +360,7 @@ export default function Eventos() {
             <div className="w-full lg:w-[220px] h-40 shrink-0 overflow-hidden rounded-xl bg-ink/[0.06] flex items-center justify-center">
               <div className="text-center">
                 <Mic2 className="size-11 text-blue-400 mx-auto mb-2" />
-                <p className="text-ink/75 text-xs">
+                <p className="text-ink-muted text-xs">
                   {evento.tipo_evento || "EVENTO"}
                 </p>
               </div>
@@ -387,12 +387,12 @@ export default function Eventos() {
               </h3>
 
               {evento.descricao && (
-                <p className="text-ink/75 text-sm mb-3 line-clamp-2">
+                <p className="text-ink-muted text-sm mb-3 line-clamp-2">
                   {evento.descricao}
                 </p>
               )}
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1 text-ink/90 text-sm">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1 text-ink-muted text-sm">
                 <p>
                   <strong>Empresa:</strong>{" "}
                   {evento.nome_empresa || "Empresa parceira"}
@@ -429,8 +429,8 @@ export default function Eventos() {
                   aria-label="Comprovação de participação"
                 >
                   {situacao === "aguardando_evento" && (
-                    <p className="flex items-start gap-2 text-ink/80">
-                      <Hourglass className="size-4 shrink-0 mt-0.5 text-ink/65" />
+                    <p className="flex items-start gap-2 text-ink">
+                      <Hourglass className="size-4 shrink-0 mt-0.5 text-ink" />
                       <span>
                         A entrega da comprovação de participação ainda não foi liberada. Ela abre
                         em <strong>{aberturaTexto}</strong>, depois do evento, e fica disponível
@@ -478,11 +478,11 @@ export default function Eventos() {
                       <div className="min-w-0">
                         <p>Comprovação reprovada pela coordenação.</p>
                         {inscricao.comprovacao_motivo_reprovacao && (
-                          <p className="text-ink/85 break-words">
+                          <p className="text-ink break-words">
                             <strong>Motivo:</strong> {inscricao.comprovacao_motivo_reprovacao}
                           </p>
                         )}
-                        <p className="text-ink/75">
+                        <p className="text-ink">
                           {inscricao.prazo_aberto
                             ? `Você pode reenviar até ${prazoTexto} (${textoDiasRestantes(inscricao.dias_restantes)}).`
                             : `O prazo terminou em ${prazoTexto}; as horas deste evento não foram contabilizadas.`}
@@ -492,7 +492,7 @@ export default function Eventos() {
                   )}
 
                   {situacao === "encerrado" && (
-                    <p className="flex items-start gap-2 text-ink/75">
+                    <p className="flex items-start gap-2 text-ink">
                       <AlertTriangle className="size-4 shrink-0 mt-0.5 text-amber-300" />
                       <span>
                         O prazo para comprovar a participação terminou em {prazoTexto}. As horas
@@ -504,7 +504,7 @@ export default function Eventos() {
                   )}
 
                   {inscricao.prazo_estendido_ate && inscricao.prazo_aberto && situacao !== "confirmado" && (
-                    <p className="mt-2 text-ink/65 break-words">
+                    <p className="mt-2 text-ink break-words">
                       Prazo estendido pela coordenação
                       {inscricao.prazo_motivo ? `: ${inscricao.prazo_motivo}` : "."}
                     </p>
@@ -520,7 +520,7 @@ export default function Eventos() {
                         </span>
                       </p>
                       {inscricao.pedido_prazo_mensagem && (
-                        <p className="mt-1 text-ink/75 break-words whitespace-pre-wrap">
+                        <p className="mt-1 text-ink break-words whitespace-pre-wrap">
                           “{inscricao.pedido_prazo_mensagem}”
                         </p>
                       )}
@@ -537,7 +537,7 @@ export default function Eventos() {
                         </span>
                       </p>
                       {inscricao.pedido_prazo_resposta && (
-                        <p className="mt-1 text-ink/85 break-words whitespace-pre-wrap">
+                        <p className="mt-1 text-ink break-words whitespace-pre-wrap">
                           <strong>Resposta:</strong> {inscricao.pedido_prazo_resposta}
                         </p>
                       )}
@@ -562,7 +562,7 @@ export default function Eventos() {
                         <button
                           type="button"
                           onClick={() => abrirComprovacao(evento)}
-                          className="inline-flex items-center gap-2 rounded-lg bg-blue-500 px-3 py-2 font-semibold text-on-accent hover:bg-blue-600 transition"
+                          className="inline-flex items-center gap-2 rounded-lg bg-brand px-3 py-2 font-semibold text-on-brand hover:bg-brand-hover transition"
                         >
                           <Upload className="size-4" />
                           {situacao === "aberto" ? "Enviar comprovação" : "Reenviar comprovação"}
@@ -573,7 +573,7 @@ export default function Eventos() {
                         <button
                           type="button"
                           onClick={() => abrirMensagem(evento)}
-                          className="inline-flex items-center gap-2 rounded-lg bg-blue-500 px-3 py-2 font-semibold text-on-accent hover:bg-blue-600 transition"
+                          className="inline-flex items-center gap-2 rounded-lg bg-brand px-3 py-2 font-semibold text-on-brand hover:bg-brand-hover transition"
                         >
                           <MessageSquare className="size-4" />
                           Enviar mensagem à coordenação
@@ -591,7 +591,7 @@ export default function Eventos() {
     className={`rounded-lg py-2 px-4 text-sm font-semibold transition ${
       inscrito
         ? "bg-green-500 text-on-accent cursor-default"
-        : "bg-blue-500 text-on-accent hover:bg-blue-600"
+        : "bg-brand text-on-brand hover:bg-brand-hover"
     }`}
   >
     {inscrito ? "Inscrito" : "Inscrever-se"}
@@ -639,7 +639,7 @@ export default function Eventos() {
               <div className="app-modal-fields">
                 <div className="sm:col-span-2">
                   <p className="text-ink font-medium break-words">{mensagemAlvo.titulo}</p>
-                  <p className="text-ink/75 text-sm">
+                  <p className="text-ink-muted text-sm">
                     O prazo de entrega da comprovação deste evento já passou. Explique por que
                     você não conseguiu entregar; a coordenação pode reabrir o prazo para você.
                   </p>
@@ -660,7 +660,7 @@ export default function Eventos() {
                     className="w-full rounded-xl bg-raised border border-ink/15 p-3 text-ink outline-none"
                     placeholder="Ex: estive afastado por motivo de saúde na semana do prazo..."
                   />
-                  <p className="text-ink/65 text-sm mt-2">{textoMensagem.length}/1000</p>
+                  <p className="text-ink-muted text-sm mt-2">{textoMensagem.length}/1000</p>
                 </div>
 
                 {erroMensagem && (
@@ -677,7 +677,7 @@ export default function Eventos() {
                   disabled={enviandoMensagem}
                   variant="outline"
                   className="rounded-xl bg-transparent text-ink hover:bg-ink/[0.06]"
-                  style={{ borderColor: "#7d7d7d", color: "var(--ink)" }}
+                  style={{ borderColor: "var(--taupe)", color: "var(--ink)" }}
                 >
                   Cancelar
                 </Button>
@@ -685,7 +685,7 @@ export default function Eventos() {
                 <Button
                   type="submit"
                   disabled={enviandoMensagem}
-                  className="rounded-xl bg-ink text-on-accent hover:bg-ink/85"
+                  className="rounded-xl bg-brand text-on-brand hover:bg-brand-hover"
                 >
                   {enviandoMensagem ? "Enviando..." : "Enviar mensagem"}
                 </Button>
@@ -725,7 +725,7 @@ export default function Eventos() {
               <div className="app-modal-fields">
                 <div className="sm:col-span-2">
                   <p className="text-ink font-medium break-words">{comprovacaoAlvo.titulo}</p>
-                  <p className="text-ink/75 text-sm">
+                  <p className="text-ink-muted text-sm">
                     Prazo: até{" "}
                     {formatarDataCurta(inscricoes[comprovacaoAlvo.id_evento]?.prazo_comprovacao)}.
                     Envie um certificado, relatório, foto ou outro documento, e/ou escreva um
@@ -736,7 +736,7 @@ export default function Eventos() {
                       Este envio substitui a comprovação anterior (arquivo e relato).
                     </p>
                   )}
-                  <p className="text-ink/65 text-sm mt-2">
+                  <p className="text-ink-muted text-sm mt-2">
                     <span className="text-red-400">*</span> Preencha pelo menos um dos dois
                     campos abaixo.
                   </p>
@@ -754,7 +754,7 @@ export default function Eventos() {
                     onChange={(e) => setArquivoComprovacao(e.target.files?.[0] ?? null)}
                     className="w-full rounded-xl bg-raised border border-ink/15 p-3 text-ink"
                   />
-                  <p className="text-ink/65 text-sm mt-2">
+                  <p className="text-ink-muted text-sm mt-2">
                     PNG, JPG, PDF, TXT, DOC ou DOCX, até 10 MB.
                   </p>
                 </div>
@@ -789,7 +789,7 @@ export default function Eventos() {
                   disabled={enviandoComprovacao}
                   variant="outline"
                   className="rounded-xl bg-transparent text-ink hover:bg-ink/[0.06]"
-                  style={{ borderColor: "#7d7d7d", color: "var(--ink)" }}
+                  style={{ borderColor: "var(--taupe)", color: "var(--ink)" }}
                 >
                   Cancelar
                 </Button>
@@ -797,7 +797,7 @@ export default function Eventos() {
                 <Button
                   type="submit"
                   disabled={enviandoComprovacao}
-                  className="rounded-xl bg-ink text-on-accent hover:bg-ink/85"
+                  className="rounded-xl bg-brand text-on-brand hover:bg-brand-hover"
                 >
                   {enviandoComprovacao ? "Enviando..." : "Enviar comprovação"}
                 </Button>

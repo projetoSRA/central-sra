@@ -131,7 +131,7 @@ export default function AgendarVisitaTecnica({ onAgendado }: { onAgendado: () =>
               <div className="app-modal-fields">
               <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-ink/75 text-sm mb-2">Nome da empresa parceira<Obrigatorio /></label>
+                  <label className="block text-ink text-sm mb-2">Nome da empresa parceira<Obrigatorio /></label>
                   <input
                     type="text"
                     required value={empresaParceiraNome}
@@ -143,7 +143,7 @@ export default function AgendarVisitaTecnica({ onAgendado }: { onAgendado: () =>
                 </div>
 
                 <div>
-                  <label className="block text-ink/75 text-sm mb-2">Representante da empresa</label>
+                  <label className="block text-ink text-sm mb-2">Representante da empresa</label>
                   <input
                     type="text"
                     value={empresaParceiraRepresentante}
@@ -169,11 +169,11 @@ export default function AgendarVisitaTecnica({ onAgendado }: { onAgendado: () =>
                     </option>
                   ))}
                 </select>
-                <p className="mt-2 text-sm text-ink/75">
+                <p className="mt-2 text-sm text-ink-muted">
                   A visita e suas horas serão registradas para todos os alunos da turma selecionada.
                 </p>
                 {erroTurmas && <p role="alert" className="mt-2 text-red-300">{erroTurmas}</p>}
-                {!carregandoTurmas && !erroTurmas && turmasVisita.length === 0 && <p className="mt-2 text-ink/75">Nenhuma turma disponível. Cadastre curso e série/semestre dos alunos.</p>}
+                {!carregandoTurmas && !erroTurmas && turmasVisita.length === 0 && <p className="mt-2 text-ink">Nenhuma turma disponível. Cadastre curso e série/semestre dos alunos.</p>}
               </div>
               <div>
                 <label className="block text-ink mb-2">Local<Obrigatorio /></label>
@@ -246,7 +246,7 @@ export default function AgendarVisitaTecnica({ onAgendado }: { onAgendado: () =>
                   onClick={() => setModalVisitaAberto(false)} disabled={salvandoVisita}
                   variant="outline"
                   className="rounded-xl bg-transparent text-ink hover:bg-ink/[0.06]"
-                  style={{ borderColor: "#7d7d7d", color: "var(--ink)" }}
+                  style={{ borderColor: "var(--taupe)", color: "var(--ink)" }}
                 >
                   Cancelar
                 </Button>
@@ -254,7 +254,7 @@ export default function AgendarVisitaTecnica({ onAgendado }: { onAgendado: () =>
                 <Button
                   type="submit"
                   disabled={salvandoVisita || carregandoTurmas || turmaVisita === ""}
-                  className="rounded-xl bg-ink text-on-accent hover:bg-ink/85"
+                  className="rounded-xl bg-brand text-on-brand hover:bg-brand-hover"
                 >
                   {salvandoVisita ? "Salvando..." : "Agendar Visita Técnica"}
                 </Button>

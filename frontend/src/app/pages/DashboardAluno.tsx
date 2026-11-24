@@ -161,7 +161,7 @@ export default function DashboardAluno() {
         <h2 className="text-2xl sm:text-4xl font-semibold text-ink">
           Olá, {primeiroNome}.
         </h2>
-        <p className="mt-2 text-ink/70">
+        <p className="mt-2 text-ink">
           {horas > 0
             ? `Você já registrou ${horas}h das ${META_HORAS}h da carga total.`
             : `Suas horas aparecem aqui assim que a coordenação aprovar o primeiro envio. A carga total é de ${META_HORAS}h.`}
@@ -178,15 +178,15 @@ export default function DashboardAluno() {
 
         <dl className="mt-6 grid grid-cols-3 border-t border-ink/15 text-ink">
           <div className="pt-4 pr-3">
-            <dt className="text-sm text-ink/65">Horas</dt>
+            <dt className="text-sm text-ink">Horas</dt>
             <dd className="font-display text-2xl sm:text-3xl font-semibold tabular-nums">{horas}h</dd>
           </div>
           <div className="pt-4 px-3 sm:px-5 border-l border-ink/15">
-            <dt className="text-sm text-ink/65">Certificados</dt>
+            <dt className="text-sm text-ink">Certificados</dt>
             <dd className="font-display text-2xl sm:text-3xl font-semibold tabular-nums">{certificados}</dd>
           </div>
           <div className="pt-4 pl-3 sm:pl-5 border-l border-ink/15">
-            <dt className="text-sm text-ink/65">Relatórios</dt>
+            <dt className="text-sm text-ink">Relatórios</dt>
             <dd className="font-display text-2xl sm:text-3xl font-semibold tabular-nums">{relatorios}</dd>
           </div>
         </dl>
@@ -205,7 +205,7 @@ export default function DashboardAluno() {
         <CardContent className="px-4 pt-1 pb-4 sm:px-6 sm:pt-2 sm:pb-6">
           <div className="flex flex-col sm:flex-row sm:items-end gap-2.5 sm:gap-3">
             <div className="flex-1">
-              <label className="block text-ink/75 text-xs sm:text-sm mb-1.5">Bimestre</label>
+              <label className="block text-ink text-xs sm:text-sm mb-1.5">Bimestre</label>
               <select
                 value={bimestrePortfolio}
                 onChange={(e) => setBimestrePortfolio(e.target.value)}
@@ -222,7 +222,7 @@ export default function DashboardAluno() {
               type="button"
               onClick={baixarPortfolio}
               disabled={gerandoPortfolio}
-              className="w-full sm:w-auto min-h-10 flex items-center justify-center gap-2 rounded-xl bg-ink px-4 text-sm sm:text-base text-on-accent hover:bg-ink/85"
+              className="w-full sm:w-auto min-h-10 flex items-center justify-center gap-2 rounded-xl bg-brand px-4 text-sm sm:text-base text-on-brand hover:bg-brand-hover"
             >
               <Download className="size-4" />
               {gerandoPortfolio ? "Gerando…" : "Baixar portfólio (.docx)"}
@@ -257,22 +257,22 @@ export default function DashboardAluno() {
                style={glassCardStyle}
               >
                 <div className="flex items-start justify-between gap-3 mb-2">
-                  <span className="text-xs px-2 py-1 rounded-full bg-ink/10 text-ink">
+                  <span className="text-xs px-2 py-1 rounded-full bg-ink/10 text-ink-muted">
                     {noticia.origem}
                   </span>
-                  <ExternalLink className="size-4 text-ink/85 shrink-0" />
+                  <ExternalLink className="size-4 text-ink shrink-0" />
                 </div>
 
                 <h3 className="text-ink font-semibold text-sm sm:text-base leading-snug mb-1.5 sm:mb-2">
                   {noticia.titulo}
                 </h3>
 
-                <p className="line-clamp-3 text-ink/80 text-sm leading-relaxed mb-3">
+                <p className="line-clamp-3 text-ink-muted text-sm leading-relaxed mb-3">
                   {noticia.resumo}
                 </p>
 
                 <div className="flex items-center justify-between gap-3 border-t border-ink/[0.12] pt-2.5">
-                  <p className="text-ink/65 text-xs">{noticia.data}</p>
+                  <p className="text-ink-muted text-xs">{noticia.data}</p>
                   <span className="text-xs font-semibold text-blue-300">Ver notícia</span>
                 </div>
               </a>
