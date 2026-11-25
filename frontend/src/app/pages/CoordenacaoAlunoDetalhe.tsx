@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { Button } from "../components/ui/button";
 import CoordenacaoLayout from "../components/CoordenacaoLayout";
 import { User } from "../utils/auth";
-import { apiFetch } from "../utils/api";
+import { apiFetch, API_URL, lerJson, mensagemDeErro } from "../utils/api";
 import { panelStyle, cardStyle } from "../../styles/uiStyles";
 import { EstenderPrazoModal } from "../components/ComprovacoesEventos";
 import {
@@ -25,8 +25,10 @@ import {
   Trash2,
   UserRound,
 } from "lucide-react";
+import { exigirSessao } from "../utils/sessao";
+import { toast } from "sonner";
+import { confirmar } from "../components/Confirmacao";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 type AlunoDetalhe = {
   id_aluno: number;
@@ -111,17 +113,9 @@ export default function CoordenacaoAlunoDetalhe() {
   const [gerandoPortfolio, setGerandoPortfolio] = useState(false);
 
   useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (!userData) {
-      navigate("/");
-      return;
-    }
+    const parsedUser = exigirSessao(navigate, "coordenacao");
+    if (!parsedUser) return;
 
-    const parsedUser = JSON.parse(userData) as User;
-    if (parsedUser.type !== "coordenacao") {
-      navigate("/");
-      return;
-    }
 
     setUser(parsedUser);
   }, [navigate]);
@@ -132,7 +126,7 @@ export default function CoordenacaoAlunoDetalhe() {
     try {
       setCarregandoAluno(true);
       const response = await apiFetch(`${API_URL}/aluno/${idAluno}`);
-      const data = await response.json();
+      const data = await lerJson(response);
 
       if (!response.ok) {
         throw new Error(data.message || "Erro ao carregar aluno");
@@ -160,7 +154,7 @@ export default function CoordenacaoAlunoDetalhe() {
       );
 
       if (!response.ok) {
-        const data = await response.json().catch(() => null);
+        const data = await lerJson(response);
         throw new Error(data?.message || "Erro ao gerar o portfólio.");
       }
 
@@ -173,8 +167,8 @@ export default function CoordenacaoAlunoDetalhe() {
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
-    } catch (error: any) {
-      alert(error.message || "Erro ao gerar o portfólio.");
+    } catch (error) {
+      toast.error(mensagemDeErro(error, "Erro ao gerar o portfólio."));
     } finally {
       setGerandoPortfolio(false);
     }
@@ -195,21 +189,21 @@ export default function CoordenacaoAlunoDetalhe() {
 
         if (aba === "certificados") {
           const response = await apiFetch(`${API_URL}/certificados/aluno/${idAluno}`);
-          const data = await response.json();
+          const data = await lerJson(response);
           if (!response.ok) throw new Error(data.message);
           setCertificados(data);
         }
 
         if (aba === "eventos") {
           const response = await apiFetch(`${API_URL}/eventos/aluno/${idAluno}`);
-          const data = await response.json();
+          const data = await lerJson(response);
           if (!response.ok) throw new Error(data.message);
           setEventos(data);
         }
 
         if (aba === "visitas") {
           const response = await apiFetch(`${API_URL}/visita/aluno/${idAluno}`);
-          const data = await response.json();
+          const data = await lerJson(response);
           if (!response.ok) throw new Error(data.message);
           setVisitas(data);
         }
@@ -227,13 +221,13 @@ export default function CoordenacaoAlunoDetalhe() {
   }, [user, idAluno, aba, recarga]);
 
   const excluirVisita = async (idVisita: number) => {
-    if (!confirm("Deseja realmente excluir esta visita?")) return;
+    if (!(await confirmar({ titulo: "Excluir esta visita técnica?", descricao: "A visita e as horas dela saem do registro do aluno. Não dá para desfazer.", confirmar: "Excluir", destrutiva: true }))) return;
 
     try {
       const response = await apiFetch(`${API_URL}/visita/${idVisita}`, {
         method: "DELETE",
       });
-      const data = await response.json();
+      const data = await lerJson(response);
 
       if (!response.ok) {
         throw new Error(data.message || "Erro ao excluir visita.");
@@ -241,8 +235,8 @@ export default function CoordenacaoAlunoDetalhe() {
 
       setVisitas((prev) => prev.filter((v) => v.id_visita !== idVisita));
       carregarAluno();
-    } catch (error: any) {
-      alert(error.message || "Erro ao excluir visita.");
+    } catch (error) {
+      toast.error(mensagemDeErro(error, "Erro ao excluir visita."));
     }
   };
 

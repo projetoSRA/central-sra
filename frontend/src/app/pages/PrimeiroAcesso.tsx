@@ -6,9 +6,9 @@ import { Label } from "../components/ui/label";
 import { Button } from "../components/ui/button";
 import { KeyRound, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { Toaster } from "../components/ui/sonner";
 import { User } from "../utils/auth";
-import { apiFetch, API_URL, saveSession, getToken, clearSession } from "../utils/api";
+import { apiFetch, API_URL, saveSession, getToken, clearSession, lerJson, mensagemDeErro } from "../utils/api";
+import { lerUsuarioSalvo } from "../utils/sessao";
 
 export default function PrimeiroAcesso() {
   const navigate = useNavigate();
@@ -18,14 +18,10 @@ export default function PrimeiroAcesso() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (!userData || !getToken()) {
-      navigate("/");
-      return;
-    }
-
-    const parsedUser = JSON.parse(userData) as User;
-    if (parsedUser.type !== "aluno" || !parsedUser.precisaTrocarSenha) {
+    // Esta é a única tela de aluno que aceita a troca de senha pendente,
+    // por isso lê a sessão direto em vez de usar exigirSessao.
+    const parsedUser = lerUsuarioSalvo();
+    if (!parsedUser || parsedUser.type !== "aluno" || !parsedUser.precisaTrocarSenha) {
       navigate("/");
       return;
     }
@@ -55,7 +51,7 @@ export default function PrimeiroAcesso() {
         body: JSON.stringify({ novaSenha }),
       });
 
-      const data = await response.json();
+      const data = await lerJson(response);
 
       if (!response.ok) {
         throw new Error(data.message || "Erro ao definir senha.");
@@ -69,7 +65,7 @@ export default function PrimeiroAcesso() {
       toast.success("Senha definida com sucesso!");
       navigate("/aluno");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erro ao definir senha.");
+      toast.error(mensagemDeErro(error, "Erro ao definir senha."));
     } finally {
       setIsLoading(false);
     }
@@ -89,7 +85,6 @@ export default function PrimeiroAcesso() {
         background: "var(--paper)",
       }}
     >
-      <Toaster />
 
       <div
         className="absolute inset-0"

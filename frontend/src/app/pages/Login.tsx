@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Obrigatorio from "../components/Obrigatorio";
 import { useNavigate } from "react-router";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
@@ -10,10 +10,9 @@ import { Loader2 } from "lucide-react";
 import HourRuler from "../components/HourRuler";
 import AlternarTema from "../components/AlternarTema";
 import { toast } from "sonner";
-import { Toaster } from "../components/ui/sonner";
-import { validateMatriculaAluno, validateLogin, validateCNPJ, validatePassword } from "../utils/validators";
+import { validateMatriculaAluno, validateLogin, validatePassword } from "../utils/validators";
 import { authenticateUser } from "../utils/auth";
-import { saveSession } from "../utils/api";
+import { saveSession, PARAM_SESSAO_EXPIRADA } from "../utils/api";
 import { mascaraCNPJ } from "../utils/formatar";
 
 export default function Login() {
@@ -22,6 +21,15 @@ export default function Login() {
   const [cnpj, setCnpj] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ identifier?: string; password?: string }>({});
+
+  // Chegou aqui porque a sessão expirou (ver apiFetch): avisa uma vez e
+  // limpa o parâmetro da URL.
+  useEffect(() => {
+    if (window.location.search.includes(PARAM_SESSAO_EXPIRADA)) {
+      toast.info("Sua sessão expirou. Entre de novo para continuar.");
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  }, []);
 
   const handleLogin = async (
     userType: "aluno" | "coordenacao" | "empresa",
@@ -134,8 +142,6 @@ if (userType === "empresa") {
 
   return (
     <div className="login min-h-screen min-h-[100dvh] bg-paper flex flex-col">
-      <Toaster />
-
       <header className="login__topo">
         <span className="font-display text-xl sm:text-2xl font-bold tracking-tight text-ink">
           Central SRA

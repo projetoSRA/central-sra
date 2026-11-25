@@ -4,7 +4,7 @@ import { createPortal } from "react-dom";
 import { useNavigate } from "react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { User } from "../utils/auth";
-import { apiFetch } from "../utils/api";
+import { apiFetch, API_URL, lerJson, mensagemDeErro } from "../utils/api";
 import AlunoLayout, { glassCardStyle } from "../components/AlunoLayout";
 import { panelStyle, cardStyle, buttonGlass } from "../../styles/uiStyles";
 import { Button } from "../components/ui/button";
@@ -19,6 +19,8 @@ import {
   situacaoComprovacao,
   textoDiasRestantes,
 } from "../utils/comprovacao";
+import { exigirSessao } from "../utils/sessao";
+import { toast } from "sonner";
 
 type Inscricao = ComprovacaoInfo & { id_evento: number };
 
@@ -63,7 +65,6 @@ type Evento = {
   info_palestrante: string | null;
 };
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 function formatarData(dataISO: string) {
   if (!dataISO) return "-";
@@ -107,30 +108,15 @@ export default function Eventos() {
   const [erroMensagem, setErroMensagem] = useState("");
 
   useEffect(() => {
-    const userData = localStorage.getItem("user");
+    const parsedUser = exigirSessao(navigate, "aluno");
+    if (!parsedUser) return;
 
-    if (!userData) {
-      navigate("/");
-      return;
-    }
-
-    const parsedUser = JSON.parse(userData) as User;
-
-    if (parsedUser.type !== "aluno") {
-      navigate("/");
-      return;
-    }
-
-    if (parsedUser.precisaTrocarSenha) {
-      navigate("/primeiro-acesso");
-      return;
-    }
 
     setUser(parsedUser);
 
     apiFetch(`${API_URL}/horas/aluno/${parsedUser.id}`)
-    .then(res => res.json())
-    .then(data => setHoras(data.horas))
+    .then(lerJson)
+    .then(data => setHoras(Number(data?.totalHoras) || 0))
     .catch(() => setHoras(0));
   }, [navigate]);
 
@@ -146,8 +132,8 @@ export default function Eventos() {
           apiFetch(`${API_URL}/eventos/inscricoes/aluno/${user.id}`),
         ]);
 
-        const eventosData = await eventosResponse.json();
-        const inscricoesData = await inscricoesResponse.json();
+        const eventosData = await lerJson(eventosResponse);
+        const inscricoesData = await lerJson(inscricoesResponse);
 
         if (!eventosResponse.ok) {
           throw new Error(eventosData.message || "Erro ao carregar eventos");
@@ -174,7 +160,7 @@ export default function Eventos() {
 
     try {
       const response = await apiFetch(`${API_URL}/eventos/inscricoes/aluno/${user.id}`);
-      const data = await response.json();
+      const data = await lerJson(response);
       if (response.ok) setInscricoes(mapearInscricoes(data));
     } catch (error) {
       console.error("Erro ao atualizar inscrições:", error);
@@ -208,7 +194,7 @@ export default function Eventos() {
           body: JSON.stringify({ mensagem: textoMensagem.trim() }),
         }
       );
-      const data = await response.json().catch(() => null);
+      const data = await lerJson(response);
 
       if (!response.ok) {
         throw new Error(data?.message || "Erro ao enviar mensagem.");
@@ -216,8 +202,8 @@ export default function Eventos() {
 
       setMensagemAlvo(null);
       await recarregarInscricoes();
-    } catch (error: any) {
-      setErroMensagem(error.message || "Erro ao enviar mensagem.");
+    } catch (error) {
+      setErroMensagem(mensagemDeErro(error, "Erro ao enviar mensagem."));
     } finally {
       setEnviandoMensagem(false);
     }
@@ -251,7 +237,7 @@ export default function Eventos() {
         `${API_URL}/eventos/${comprovacaoAlvo.id_evento}/comprovacao`,
         { method: "POST", body: formData }
       );
-      const data = await response.json().catch(() => null);
+      const data = await lerJson(response);
 
       if (!response.ok) {
         throw new Error(data?.message || "Erro ao enviar comprovação.");
@@ -259,8 +245,8 @@ export default function Eventos() {
 
       setComprovacaoAlvo(null);
       await recarregarInscricoes();
-    } catch (error: any) {
-      setErroComprovacao(error.message || "Erro ao enviar comprovação.");
+    } catch (error) {
+      setErroComprovacao(mensagemDeErro(error, "Erro ao enviar comprovação."));
       // O prazo pode ter fechado enquanto o modal estava aberto.
       recarregarInscricoes();
     } finally {
@@ -282,7 +268,7 @@ export default function Eventos() {
         }),
       });
 
-      const data = await response.json();
+      const data = await lerJson(response);
 
       if (!response.ok) {
         throw new Error(data.message || "Erro ao realizar inscrição");
@@ -293,8 +279,8 @@ export default function Eventos() {
       );
       // Busca prazo/situação da comprovação (caso o evento já tenha passado).
       recarregarInscricoes();
-    } catch (error: any) {
-      alert(error.message || "Erro ao realizar inscrição.");
+    } catch (error) {
+      toast.error(mensagemDeErro(error, "Erro ao realizar inscrição."));
     }
   };
 

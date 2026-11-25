@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { apiFetch, API_URL } from "../utils/api";
+import { apiFetch, API_URL, lerJson, mensagemDeErro } from "../utils/api";
 import { panelStyle } from "../../styles/uiStyles";
 import { MessageCircle, X, Send, Bot, RotateCcw } from "lucide-react";
 
@@ -32,13 +32,13 @@ function carregarConversa(): Mensagem[] {
     if (!Array.isArray(mensagens)) return [MENSAGEM_INICIAL];
 
     const validas = mensagens.filter(
-      (mensagem: any) =>
+      (mensagem: { autor?: unknown; texto?: unknown } | null) =>
         mensagem &&
         (mensagem.autor === "coordenacao" || mensagem.autor === "bot") &&
         typeof mensagem.texto === "string"
     );
 
-    return validas.length > 0 ? validas.slice(-30) : [MENSAGEM_INICIAL];
+    return validas.length > 0 ? (validas.slice(-30) as Mensagem[]) : [MENSAGEM_INICIAL];
   } catch {
     return [MENSAGEM_INICIAL];
   }
@@ -88,7 +88,7 @@ export default function ChatbotCoordenacao() {
         }),
       });
 
-      const data = await response.json();
+      const data = await lerJson(response);
 
       if (!response.ok) {
         throw new Error(data.message || "Erro ao falar com o assistente.");
@@ -96,12 +96,12 @@ export default function ChatbotCoordenacao() {
 
       setMensagens((atual) => [...atual, { autor: "bot", texto: data.resposta }]);
       setSugestoes(Array.isArray(data.sugestoes) ? data.sugestoes : []);
-    } catch (error: any) {
+    } catch (error) {
       setMensagens((atual) => [
         ...atual,
         {
           autor: "bot",
-          texto: error.message || "Não consegui falar com o servidor agora. Tenta de novo em instantes.",
+          texto: mensagemDeErro(error, "Não consegui falar com o servidor agora. Tenta de novo em instantes."),
         },
       ]);
     } finally {

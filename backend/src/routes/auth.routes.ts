@@ -28,6 +28,10 @@ router.post("/login", loginRateLimit, async (req, res) => {
     }
 
     const tipoUsuario = String(type).toUpperCase();
+    const identificador = String(identifier).trim();
+    // Empresa: o CNPJ pode chegar com ou sem pontuação (o front tira, mas
+    // outros clientes podem mandar "11.222.333/0001-81"); compara os dígitos.
+    const identificadorDigitos = identificador.replace(/\D/g, "");
 
     const result = await db.query(
       `
@@ -67,18 +71,37 @@ router.post("/login", loginRateLimit, async (req, res) => {
           OR (u.tipo_usuario <> 'ALUNO' AND u.login = $1)
           -- Empresa: o login salvo em usuario nem sempre é o CNPJ cadastrado
           -- em empresa.cnpj (que fica com pontuação). Aceita os dois,
-          -- comparando só os dígitos do CNPJ.
-          OR (u.tipo_usuario = 'EMPRESA' AND regexp_replace(COALESCE(e.cnpj, ''), '[^0-9]', '', 'g') = $1)
+          -- comparando só os dígitos.
+          OR (
+            u.tipo_usuario = 'EMPRESA'
+            AND $3 <> ''
+            AND (u.login = $3 OR regexp_replace(COALESCE(e.cnpj, ''), '[^0-9]', '', 'g') = $3)
+          )
         )
-      ORDER BY (u.login = $1) DESC
-      LIMIT 1
+      -- Login idêntico ao digitado vem primeiro. "IS TRUE" evita que um
+      -- login NULL (comparação = NULL) passe na frente no DESC.
+      ORDER BY (u.login = $1) IS TRUE DESC, (u.login = $3) IS TRUE DESC
+      LIMIT 2
       `,
-      [identifier, tipoUsuario]
+      [identificador, tipoUsuario, identificadorDigitos]
     );
 
     if (result.rowCount === 0) {
       return res.status(401).json({
         message: "Login não encontrado.",
+      });
+    }
+
+    // Mais de uma empresa casou só pelo CNPJ (nenhuma pelo login exato):
+    // escolher uma ao acaso deixaria a outra sem acesso, então recusa.
+    if (
+      tipoUsuario === "EMPRESA" &&
+      result.rows.length > 1 &&
+      result.rows[0].login !== identificador &&
+      result.rows[0].login !== identificadorDigitos
+    ) {
+      return res.status(409).json({
+        message: "Há mais de uma empresa com este CNPJ. Fale com a coordenação.",
       });
     }
 

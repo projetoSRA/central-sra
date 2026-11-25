@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { Button } from "../components/ui/button";
 import { User } from "../utils/auth";
 import { formatarDataCurta } from "../utils/comprovacao";
-import { apiFetch } from "../utils/api";
+import { apiFetch, API_URL, lerJson, mensagemDeErro } from "../utils/api";
 import AlunoLayout, { glassCardStyle } from "../components/AlunoLayout";
 import { panelStyle, cardStyle, buttonGlass } from "../../styles/uiStyles";
 import {
@@ -17,6 +17,9 @@ import {
   X,
   FileBadge2,
 } from "lucide-react";
+import { exigirSessao } from "../utils/sessao";
+import { toast } from "sonner";
+import { confirmar } from "../components/Confirmacao";
 
 type TipoArquivo = "certificado" | "relatorio";
 
@@ -32,7 +35,34 @@ type ArquivoAluno = {
   status: string;
 };
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+// Formato do arquivo como vem da API (colunas do banco).
+type ArquivoApi = {
+  id_certificado: number;
+  tipo_arquivo?: string | null;
+  titulo: string;
+  quantidade_horas?: number | string | null;
+  horas_aprovadas?: number | string | null;
+  data_emissao: string;
+  nome_arquivo?: string | null;
+  url_publica?: string | null;
+  url_arquivo?: string | null;
+  status_certificado?: string | null;
+};
+
+function paraArquivoAluno(item: ArquivoApi): ArquivoAluno {
+  return {
+    id: item.id_certificado,
+    tipo: item.tipo_arquivo === "RELATORIO" ? "relatorio" : "certificado",
+    titulo: item.titulo,
+    quantidadeHoras: Number(item.quantidade_horas || 0),
+    horasAprovadas: Number(item.horas_aprovadas || 0),
+    dataEmissao: item.data_emissao,
+    arquivoNome: item.nome_arquivo || "Arquivo",
+    arquivoUrl: item.url_publica || item.url_arquivo || "",
+    status: item.status_certificado || "PENDENTE",
+  };
+}
+
 
 // As datas exibidas nesta tela vêm de colunas DATE (sem hora). Passar por
 // new Date() converte o fuso e mostra um dia antes do cadastrado; por isso
@@ -76,24 +106,9 @@ export default function Certificados() {
   const [salvando, setSalvando] = useState(false);
 
   useEffect(() => {
-    const userData = localStorage.getItem("user");
+    const parsedUser = exigirSessao(navigate, "aluno");
+    if (!parsedUser) return;
 
-    if (!userData) {
-      navigate("/");
-      return;
-    }
-
-    const parsedUser = JSON.parse(userData) as User;
-
-    if (parsedUser.type !== "aluno") {
-      navigate("/");
-      return;
-    }
-
-    if (parsedUser.precisaTrocarSenha) {
-      navigate("/primeiro-acesso");
-      return;
-    }
 
     setUser(parsedUser);
   }, [navigate]);
@@ -106,23 +121,13 @@ export default function Certificados() {
         setLoading(true);
 
         const response = await apiFetch(`${API_URL}/certificados/aluno/${user.id}`);
-        const data = await response.json();
+        const data = await lerJson(response);
 
         if (!response.ok) {
           throw new Error(data.message || "Erro ao carregar arquivos");
         }
 
-        const arquivosFormatados: ArquivoAluno[] = data.map((item: any) => ({
-          id: item.id_certificado,
-          tipo: item.tipo_arquivo === "RELATORIO" ? "relatorio" : "certificado",
-          titulo: item.titulo,
-          quantidadeHoras: Number(item.quantidade_horas || 0),
-          horasAprovadas: Number(item.horas_aprovadas || 0),
-          dataEmissao: item.data_emissao,
-          arquivoNome: item.nome_arquivo || "Arquivo",
-          arquivoUrl: item.url_publica || item.url_arquivo,
-          status: item.status_certificado || "PENDENTE",
-        }));
+        const arquivosFormatados: ArquivoAluno[] = data.map(paraArquivoAluno);
 
         setArquivos(arquivosFormatados);
       } catch (error) {
@@ -167,7 +172,7 @@ export default function Certificados() {
 
   const validarArquivo = () => {
     if (!arquivo) {
-      alert("Selecione um arquivo.");
+      toast.error("Selecione um arquivo.");
       return false;
     }
 
@@ -184,7 +189,7 @@ export default function Certificados() {
     const permitido = extensoesPermitidas.some((ext) => nome.endsWith(ext));
 
     if (!permitido) {
-      alert(
+      toast.error(
         tipoSelecionado === "certificado"
           ? "Certificados aceitam apenas imagem ou PDF."
           : "Relatórios aceitam apenas PDF, TXT, DOC ou DOCX."
@@ -195,7 +200,7 @@ export default function Certificados() {
     const horasNumber = Number(horas);
 
     if (Number.isNaN(horasNumber) || horasNumber <= 0) {
-      alert("Informe uma quantidade de horas válida.");
+      toast.error("Informe uma quantidade de horas válida.");
       return false;
     }
 
@@ -203,18 +208,18 @@ export default function Certificados() {
       tipoSelecionado === "relatorio" &&
       (horasNumber < 1 || horasNumber > 2)
     ) {
-      alert("Relatórios devem ter entre 1 e 2 horas.");
+      toast.error("Relatórios devem ter entre 1 e 2 horas.");
       return false;
     }
 
     if (!bimestre) {
-      alert("Selecione o bimestre.");
+      toast.error("Selecione o bimestre.");
       return false;
     }
 
     if (tipoSelecionado === "relatorio") {
       if (!local.trim() || !conteudo.trim()) {
-        alert(
+        toast.error(
           "Para relatórios, informe o local da atividade e o conteúdo do relato — é o texto usado para montar o Portfólio do Aluno automaticamente."
         );
         return false;
@@ -234,7 +239,6 @@ export default function Certificados() {
 
       const formData = new FormData();
 
-      formData.append("idAluno", String(user.id));
       formData.append("tipo", tipoSelecionado);
       formData.append("titulo", titulo);
       formData.append("horas", horas);
@@ -252,52 +256,40 @@ export default function Certificados() {
         body: formData,
       });
 
-      const result = await response.json();
+      const result = await lerJson(response);
 
       if (!response.ok) {
         throw new Error(result.message || "Erro ao enviar arquivo");
       }
 
-      const item = result.arquivo;
-
-      const novoArquivo: ArquivoAluno = {
-        id: item.id_certificado,
-        tipo: item.tipo_arquivo === "RELATORIO" ? "relatorio" : "certificado",
-        titulo: item.titulo,
-        quantidadeHoras: Number(item.quantidade_horas || 0),
-        horasAprovadas: Number(item.horas_aprovadas || 0),
-        dataEmissao: item.data_emissao,
-        arquivoNome: item.nome_arquivo || "Arquivo",
-        arquivoUrl: item.url_publica || item.url_arquivo,
-        status: item.status_certificado || "PENDENTE",
-      };
+      const novoArquivo = paraArquivoAluno(result.arquivo as ArquivoApi);
 
       setArquivos((prev) => [novoArquivo, ...prev]);
       fecharModal();
-    } catch (error: any) {
-      alert(error.message || "Erro ao enviar arquivo.");
+    } catch (error) {
+      toast.error(mensagemDeErro(error, "Erro ao enviar arquivo."));
     } finally {
       setSalvando(false);
     }
   };
 
   const excluirArquivo = async (id: number) => {
-    if (!confirm("Deseja realmente excluir este arquivo?")) return;
+    if (!(await confirmar({ titulo: "Excluir este arquivo?", descricao: "O arquivo e as horas dele saem da sua lista. Não dá para desfazer.", confirmar: "Excluir", destrutiva: true }))) return;
 
     try {
       const response = await apiFetch(`${API_URL}/certificados/${id}`, {
         method: "DELETE",
       });
 
-      const data = await response.json();
+      const data = await lerJson(response);
 
       if (!response.ok) {
         throw new Error(data.message || "Erro ao excluir arquivo");
       }
 
       setArquivos((prev) => prev.filter((item) => item.id !== id));
-    } catch (error: any) {
-      alert(error.message || "Erro ao excluir arquivo.");
+    } catch (error) {
+      toast.error(mensagemDeErro(error, "Erro ao excluir arquivo."));
     }
   };
 

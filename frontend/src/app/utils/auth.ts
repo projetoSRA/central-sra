@@ -1,3 +1,4 @@
+import { API_URL, lerJson } from "./api";
 export type User = {
   id: number;
   name: string;
@@ -12,7 +13,6 @@ export type User = {
   precisaTrocarSenha?: boolean;
 };
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export async function authenticateUser(
   type: "aluno" | "coordenacao" | "empresa",
@@ -32,7 +32,7 @@ export async function authenticateUser(
       }),
     });
 
-    const data = await response.json();
+    const data = await lerJson(response);
 
     if (!response.ok) {
       return {

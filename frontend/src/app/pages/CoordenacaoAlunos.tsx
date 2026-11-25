@@ -5,9 +5,10 @@ import { Button } from "../components/ui/button";
 import CoordenacaoLayout from "../components/CoordenacaoLayout";
 import AgendarVisitaTecnica from "../components/AgendarVisitaTecnica";
 import { User } from "../utils/auth";
-import { apiFetch } from "../utils/api";
+import { apiFetch, API_URL, lerJson } from "../utils/api";
 import { panelStyle, cardStyle } from "../../styles/uiStyles";
 import { Clock, Search, Upload, Users } from "lucide-react";
+import { exigirSessao } from "../utils/sessao";
 
 type ResultadoImportacao = {
   message: string;
@@ -23,7 +24,6 @@ type ResultadoImportacao = {
   ignorados: { linha: number; motivo: string }[];
 };
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 type AlunoResumo = {
   id_aluno: number;
@@ -75,17 +75,9 @@ export default function CoordenacaoAlunos() {
   const [erroImportacao, setErroImportacao] = useState<string | null>(null);
 
   useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (!userData) {
-      navigate("/");
-      return;
-    }
+    const parsedUser = exigirSessao(navigate, "coordenacao");
+    if (!parsedUser) return;
 
-    const parsedUser = JSON.parse(userData) as User;
-    if (parsedUser.type !== "coordenacao") {
-      navigate("/");
-      return;
-    }
 
     setUser(parsedUser);
   }, [navigate]);
@@ -99,7 +91,7 @@ export default function CoordenacaoAlunos() {
 
         const query = busca.trim() ? `?busca=${encodeURIComponent(busca.trim())}` : "";
         const response = await apiFetch(`${API_URL}/aluno${query}`);
-        const data = await response.json();
+        const data = await lerJson(response);
 
         if (!response.ok) {
           throw new Error(data.message || "Erro ao carregar alunos");
@@ -178,7 +170,7 @@ export default function CoordenacaoAlunos() {
         body: formData,
       });
 
-      const data = await response.json();
+      const data = await lerJson(response);
 
       if (!response.ok) {
         throw new Error(data.message || "Erro ao importar a planilha.");

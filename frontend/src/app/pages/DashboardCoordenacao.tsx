@@ -11,7 +11,8 @@ import CoordenacaoLayout from "../components/CoordenacaoLayout";
 import ComprovacoesEventos from "../components/ComprovacoesEventos";
 import { User } from "../utils/auth";
 import { formatarDataCurta } from "../utils/comprovacao";
-import { apiFetch } from "../utils/api";
+import { apiFetch, API_URL, lerJson, mensagemDeErro } from "../utils/api";
+import ErroCarregamento from "../components/ErroCarregamento";
 import { panelStyle, cardStyle } from "../../styles/uiStyles";
 import {
   CheckCircle2,
@@ -25,8 +26,9 @@ import {
   X,
   XCircle,
 } from "lucide-react";
+import { exigirSessao } from "../utils/sessao";
+import { toast } from "sonner";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 type Pendente = {
   id_certificado: number;
@@ -91,23 +93,20 @@ export default function DashboardCoordenacao() {
   const [historico, setHistorico] = useState<Historico[]>([]);
   const [loadingHistorico, setLoadingHistorico] = useState(false);
   const [historicoCarregado, setHistoricoCarregado] = useState(false);
-  const [totalAlunos, setTotalAlunos] = useState(0);
+  // null = não foi possível carregar (mostra "—", não um zero enganoso).
+  const [totalAlunos, setTotalAlunos] = useState<number | null>(null);
+  // Falha ao carregar: a tela mostra o erro e "Tentar de novo", em vez de
+  // "Nenhuma pendência", que faria a coordenação achar que não há nada.
+  const [erroPendentes, setErroPendentes] = useState<string | null>(null);
+  const [erroHistorico, setErroHistorico] = useState<string | null>(null);
 
   const [rejeicaoAlvo, setRejeicaoAlvo] = useState<Pendente | null>(null);
   const [motivoRejeicao, setMotivoRejeicao] = useState("");
 
   useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (!userData) {
-      navigate("/");
-      return;
-    }
+    const parsedUser = exigirSessao(navigate, "coordenacao");
+    if (!parsedUser) return;
 
-    const parsedUser = JSON.parse(userData) as User;
-    if (parsedUser.type !== "coordenacao") {
-      navigate("/");
-      return;
-    }
 
     setUser(parsedUser);
   }, [navigate]);
@@ -115,9 +114,10 @@ export default function DashboardCoordenacao() {
   const carregarPendentes = async () => {
     try {
       setLoadingPendentes(true);
+      setErroPendentes(null);
 
       const response = await apiFetch(`${API_URL}/validacao/pendentes`);
-      const data = await response.json();
+      const data = await lerJson(response);
 
       if (!response.ok) {
         throw new Error(data.message || "Erro ao carregar pendências");
@@ -136,6 +136,7 @@ export default function DashboardCoordenacao() {
     } catch (error) {
       console.error("Erro ao carregar pendências:", error);
       setPendentes([]);
+      setErroPendentes(mensagemDeErro(error, "Não foi possível carregar as pendências."));
     } finally {
       setLoadingPendentes(false);
     }
@@ -146,11 +147,12 @@ export default function DashboardCoordenacao() {
 
     try {
       setLoadingHistorico(true);
+      setErroHistorico(null);
 
       const response = await apiFetch(
         `${API_URL}/validacao/coordenacao/${user.id}`
       );
-      const data = await response.json();
+      const data = await lerJson(response);
 
       if (!response.ok) {
         throw new Error(data.message || "Erro ao carregar histórico");
@@ -161,18 +163,21 @@ export default function DashboardCoordenacao() {
     } catch (error) {
       console.error("Erro ao carregar histórico:", error);
       setHistorico([]);
+      setErroHistorico(mensagemDeErro(error, "Não foi possível carregar o histórico."));
     } finally {
       setLoadingHistorico(false);
     }
   };
 
+  // Só o número: a rota devolve { total } em vez da lista inteira de alunos.
   const carregarTotalAlunos = async () => {
     try {
-      const response = await apiFetch(`${API_URL}/aluno`);
-      const data = await response.json();
-      setTotalAlunos(response.ok && Array.isArray(data) ? data.length : 0);
+      const response = await apiFetch(`${API_URL}/aluno/contagem`);
+      const data = await lerJson(response);
+      const total = Number(data?.total);
+      setTotalAlunos(response.ok && Number.isFinite(total) ? total : null);
     } catch {
-      setTotalAlunos(0);
+      setTotalAlunos(null);
     }
   };
 
@@ -203,7 +208,7 @@ export default function DashboardCoordenacao() {
       horasInformadas < 0 ||
       horasInformadas > item.quantidade_horas
     ) {
-      alert(`Informe um valor entre 0 e ${item.quantidade_horas}.`);
+      toast.error(`Informe um valor entre 0 e ${item.quantidade_horas}.`);
       return;
     }
 
@@ -221,7 +226,7 @@ export default function DashboardCoordenacao() {
         }),
       });
 
-      const data = await response.json();
+      const data = await lerJson(response);
 
       if (!response.ok) {
         throw new Error(data.message || "Erro ao aprovar.");
@@ -232,8 +237,8 @@ export default function DashboardCoordenacao() {
       );
       setHistoricoCarregado(false);
       carregarHistorico();
-    } catch (error: any) {
-      alert(error.message || "Erro ao aprovar arquivo.");
+    } catch (error) {
+      toast.error(mensagemDeErro(error, "Erro ao aprovar arquivo."));
     } finally {
       setProcessando(null);
     }
@@ -261,7 +266,7 @@ export default function DashboardCoordenacao() {
         }),
       });
 
-      const data = await response.json();
+      const data = await lerJson(response);
 
       if (!response.ok) {
         throw new Error(data.message || "Erro ao reprovar.");
@@ -273,8 +278,8 @@ export default function DashboardCoordenacao() {
       setHistoricoCarregado(false);
       carregarHistorico();
       setRejeicaoAlvo(null);
-    } catch (error: any) {
-      alert(error.message || "Erro ao reprovar arquivo.");
+    } catch (error) {
+      toast.error(mensagemDeErro(error, "Erro ao reprovar arquivo."));
     } finally {
       setProcessando(null);
     }
@@ -301,13 +306,13 @@ export default function DashboardCoordenacao() {
       title="Dashboard da Coordenação"
       subtitle={`Bem-vindo(a), ${user.name}`}
       pendentesCount={
-        loadingPendentes ? undefined : pendentes.length + comprovacoesPendentes
+        loadingPendentes || erroPendentes ? undefined : pendentes.length + comprovacoesPendentes
       }
     >
       <section className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3" aria-label="Resumo da coordenação">
         {[
-          { label: "Pendências", value: pendentes.length + comprovacoesPendentes, icon: Clock, color: "text-amber-300" },
-          { label: "Alunos", value: totalAlunos, icon: Users, color: "text-blue-300" },
+          { label: "Pendências", value: erroPendentes ? "—" : pendentes.length + comprovacoesPendentes, icon: Clock, color: "text-amber-300" },
+          { label: "Alunos", value: totalAlunos ?? "—", icon: Users, color: "text-blue-300" },
           { label: "Certificados", value: certificadosAprovados, icon: FileCheck2, color: "text-emerald-300" },
           { label: "Relatórios", value: relatoriosAprovados, icon: FileText, color: "text-violet-300" },
         ].map(({ label, value, icon: SummaryIcon, color }) => (
@@ -382,7 +387,11 @@ export default function DashboardCoordenacao() {
                   </div>
                 )}
 
-                {!loadingPendentes && pendentes.length === 0 && (
+                {!loadingPendentes && erroPendentes && (
+                  <ErroCarregamento mensagem={erroPendentes} onTentar={carregarPendentes} />
+                )}
+
+                {!loadingPendentes && !erroPendentes && pendentes.length === 0 && (
                   <div className="rounded-xl bg-raised border border-ink/[0.12] p-5 text-center sm:p-6">
                     <CheckCircle2 className="size-8 text-emerald-300 mx-auto mb-2" />
                     <h3 className="text-ink text-base font-semibold mb-1">
@@ -520,7 +529,11 @@ export default function DashboardCoordenacao() {
                   </div>
                 )}
 
-                {!loadingHistorico && historico.length === 0 && (
+                {!loadingHistorico && erroHistorico && (
+                  <ErroCarregamento mensagem={erroHistorico} onTentar={carregarHistorico} />
+                )}
+
+                {!loadingHistorico && !erroHistorico && historico.length === 0 && (
                   <div className="rounded-xl bg-raised border border-ink/[0.12] p-5 text-center sm:p-6">
                     <History className="size-10 text-ink mx-auto mb-3" />
                     <h3 className="text-ink text-lg font-semibold mb-1">

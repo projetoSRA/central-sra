@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import Obrigatorio from "./Obrigatorio";
 import { createPortal } from "react-dom";
 import { Button } from "./ui/button";
-import { apiFetch, API_URL } from "../utils/api";
+import { apiFetch, API_URL, lerJson, mensagemDeErro } from "../utils/api";
 import { panelStyle, cardStyle } from "../../styles/uiStyles";
 import {
   ComprovacaoInfo,
@@ -12,6 +12,7 @@ import {
   textoDiasRestantes,
 } from "../utils/comprovacao";
 import { CalendarClock, CheckCircle2, Eye, MessageSquare, Mic2, X, XCircle } from "lucide-react";
+import { toast } from "sonner";
 
 // Comprovações de participação em eventos (visão da coordenação):
 // aprovar/reprovar o que os alunos enviaram e estender o prazo de quem
@@ -89,15 +90,15 @@ export function EstenderPrazoModal({
           body: JSON.stringify({ novaData, motivo: motivo.trim() }),
         }
       );
-      const data = await response.json().catch(() => null);
+      const data = await lerJson(response);
 
       if (!response.ok) {
         throw new Error(data?.message || "Erro ao estender prazo.");
       }
 
       onSalvo();
-    } catch (error: any) {
-      setErro(error.message || "Erro ao estender prazo.");
+    } catch (error) {
+      setErro(mensagemDeErro(error, "Erro ao estender prazo."));
     } finally {
       setSalvando(false);
     }
@@ -240,17 +241,17 @@ export default function ComprovacoesEventos({
     try {
       setErro("");
       const response = await apiFetch(`${API_URL}/eventos/comprovacoes`);
-      const data = await response.json();
+      const data = await lerJson(response);
 
       if (!response.ok) {
         throw new Error(data.message || "Erro ao carregar comprovações.");
       }
 
       setItens(data);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Erro ao carregar comprovações:", error);
       setItens([]);
-      setErro(error.message || "Erro ao carregar comprovações.");
+      setErro(mensagemDeErro(error, "Erro ao carregar comprovações."));
     } finally {
       setCarregando(false);
     }
@@ -301,7 +302,7 @@ export default function ComprovacoesEventos({
           body: JSON.stringify({ status, motivo: motivo || null }),
         }
       );
-      const data = await response.json().catch(() => null);
+      const data = await lerJson(response);
 
       if (!response.ok) {
         throw new Error(data?.message || "Erro ao validar comprovação.");
@@ -309,11 +310,11 @@ export default function ComprovacoesEventos({
 
       await carregar();
       return true;
-    } catch (error: any) {
+    } catch (error) {
       if (status === "REPROVADO") {
-        setErroReprovacao(error.message || "Erro ao reprovar comprovação.");
+        setErroReprovacao(mensagemDeErro(error, "Erro ao reprovar comprovação."));
       } else {
-        alert(error.message || "Erro ao aprovar comprovação.");
+        toast.error(mensagemDeErro(error, "Erro ao aprovar comprovação."));
       }
       return false;
     } finally {
@@ -353,7 +354,7 @@ export default function ComprovacoesEventos({
           body: JSON.stringify({ resposta: respostaRecusa.trim() }),
         }
       );
-      const data = await response.json().catch(() => null);
+      const data = await lerJson(response);
 
       if (!response.ok) {
         throw new Error(data?.message || "Erro ao recusar pedido.");
@@ -361,8 +362,8 @@ export default function ComprovacoesEventos({
 
       setRecusaAlvo(null);
       await carregar();
-    } catch (error: any) {
-      setErroRecusa(error.message || "Erro ao recusar pedido.");
+    } catch (error) {
+      setErroRecusa(mensagemDeErro(error, "Erro ao recusar pedido."));
     } finally {
       setRecusando(false);
     }
